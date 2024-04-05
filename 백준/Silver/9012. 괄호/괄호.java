@@ -1,98 +1,46 @@
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Stack;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int count = Integer.parseInt(br.readLine());
+    static final String YES = "YES";
+    static final String NO = "NO";
 
-        for (int i = 0; i < count; i++) {
-            Stack stack = new Stack();
+    public static void main(String[] args) throws Exception {
 
-            boolean check = true;
-            String line = br.readLine();
+        BufferedReader reader =
+                new BufferedReader(new InputStreamReader(System.in));
 
-            for (int j = 0; j < line.length(); j++) {
-                if (line.charAt(j) == '(') {
-                    stack.push();
-                } else if (line.charAt(j) == ')') {
-                    if (!stack.pop()) {
-                        check = false;
-                        break;
-                    }
+        BufferedWriter writer =
+                new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int t = Integer.parseInt(reader.readLine());
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < t; i++) {
+            boolean flag = true;
+            int count = 0;
+            String line = reader.readLine();
+
+            for (char c : line.toCharArray()) {
+                count = c == '(' ? count + 1 : count - 1;
+
+                if (count < 0) {
+                    flag = false;
+                    break;
                 }
             }
 
-            print(check, stack);
-        }
-    }
-
-    private static void print(boolean check, Stack stack) {
-        if (check && stack.isEmpty()) {
-            System.out.println("YES");
-        } else {
-            System.out.println("NO");
-        }
-    }
-}
-
-class Stack {
-    private Node head;
-    private int count;
-
-    private static class Node {
-        Node next;
-    }
-
-    public Stack() {
-        head = null;
-        count = 0;
-    }
-
-    public void push() {
-        Node newNode = new Node();
-        if (head == null) {
-            head = newNode;
-        } else {
-            Node current = head.next;
-            Node previous = head;
-
-            while (current != null) {
-                previous = current;
-                current = current.next;
-            }
-
-            previous.next = newNode;
+            builder.append(flag && count == 0 ? YES : NO).append("\n");
         }
 
-        count++;
-    }
+        writer.write(builder.toString());
+        writer.flush();
 
-    public boolean pop() {
-        if (head == null) {
-            return false;
-        } else {
-            if (head.next == null) {
-                head = null;
-            } else {
-                Node current = head.next;
-                Node previous = head;
-
-                while (current.next != null) {
-                    previous = current;
-                    current = current.next;
-                }
-
-                previous.next = null;
-            }
-            count--;
-            return true;
-        }
-    }
-
-    public boolean isEmpty() {
-        return count == 0;
+        writer.close();
+        reader.close();
     }
 }
