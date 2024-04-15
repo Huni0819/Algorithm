@@ -37,7 +37,6 @@ public class Main {
 
     private static void solution(int num) {
         StringBuilder builder = new StringBuilder();
-        boolean flag = true;
 
         for (int i = 2; i <= num / 2; i++) {
             if (isPrime[i] && isPrime[num - i]) {
@@ -47,14 +46,11 @@ public class Main {
                         .append(" + ")
                         .append(num - i);
                 System.out.println(builder);
-                flag = false;
                 return;
             }
         }
 
-        if (flag) {
-            System.out.println("Goldbach's conjecture is wrong.");
-        }
+        System.out.println("Goldbach's conjecture is wrong.");
     }
 
 }
