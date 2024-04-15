@@ -1,11 +1,14 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
 
     static boolean[] isPrime;
+    static List<Integer> primeList = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
 
@@ -42,13 +45,19 @@ public class Main {
                 }
             }
         }
+
+        for (int i = 2; i < isPrime.length; i++) {
+            if (isPrime[i]) {
+                primeList.add(i);
+            }
+        }
     }
 
     private static void solution(long num) {
         if (num == 2) {
             System.out.println("NO");
         } else if (num % 2 == 0) {
-            System.out.println("YES"); 
+            System.out.println("YES");
         } else {
             if (isPrime(num -2)) {
                 System.out.println("YES");
@@ -63,11 +72,10 @@ public class Main {
         if (num <= isPrime.length) {
             return isPrime[(int) num];
         } else {
-            for (int i = 0; i < isPrime.length; i++) {
-                if (isPrime[i]) {
-                    if (num % i == 0) {
-                        return false;
-                    }
+
+            for (Integer prime : primeList) {
+                if (num % prime == 0) {
+                    return false;
                 }
             }
 
