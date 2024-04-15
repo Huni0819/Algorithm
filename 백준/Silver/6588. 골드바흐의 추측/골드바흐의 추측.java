@@ -30,7 +30,8 @@ public class Main {
 
         for (int i = 2; i <= Math.sqrt(1_000_000); i++) {
             for (int j = i * 2; j < 1_000_001; j += i) {
-                isPrime[j] = false;
+                if (isPrime[j])
+                    isPrime[j] = false;
             }
         }
     }
