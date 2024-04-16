@@ -22,6 +22,7 @@ public class Main {
     public static void solution(long min, long max) {
 
         int size = (int) (max - min);
+
         boolean[] arr = new boolean[size + 1];
 
         for (long i = 2; i <= Math.sqrt(max); i++) {
@@ -32,7 +33,7 @@ public class Main {
             if (min % pow != 0) {
                 tmp++;
             }
-
+            
             for (long j = tmp; j * pow <= max; j++) {
                 arr[(int) (j * pow - min)] = true;
             }
