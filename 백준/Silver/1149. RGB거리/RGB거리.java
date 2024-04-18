@@ -17,9 +17,7 @@ public class Main {
         arr = new int[n][3];
         calc = new int[n][3];
 
-        calc[0][0] = arr[0][0];
-        calc[0][1] = arr[0][1];
-        calc[0][2] = arr[0][2];
+
 
         for (int i = 0; i < n; i++) {
             StringTokenizer st = new StringTokenizer(reader.readLine());
@@ -29,34 +27,22 @@ public class Main {
             }
         }
 
-        System.out.println(Math.min(Math.min(solution(n-1, 0), solution(n-1, 1)), solution(n-1, 2)));
+        System.out.println(solution());
 
         reader.close();
     }
 
-    private static int solution(int num, int color) {
+    private static int solution() {
+        calc[0][0] = arr[0][0];
+        calc[0][1] = arr[0][1];
+        calc[0][2] = arr[0][2];
 
-        if (num < 0) {
-            return 0;
-        }
-
-        if (calc[num][color] == 0) {
-
-            if (color == 0) {
-                calc[num][color] =
-                        Math.min(solution(num-1, 1), solution(num-1, 2)) +
-                                arr[num][color];
-            } else if (color == 1) {
-                calc[num][color] =
-                        Math.min(solution(num-1, 0), solution(num-1, 2)) +
-                                arr[num][color];
-            } else {
-                calc[num][color] =
-                        Math.min(solution(num-1, 0), solution(num-1, 1)) +
-                                arr[num][color];
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < 3; j++) {
+                calc[i][j] = Math.min(calc[i-1][(j+1)%3], calc[i-1][(j+2)%3]) + arr[i][j];
             }
         }
 
-        return calc[num][color];
+        return Math.min(Math.min(calc[n-1][0], calc[n-1][1]), calc[n-1][2]);
     }
 }
