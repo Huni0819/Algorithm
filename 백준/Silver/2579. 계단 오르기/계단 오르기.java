@@ -34,12 +34,8 @@ public class Main {
 
     private static int solution(int num) {
 
-        if (num <= 0) {
-            return 0;
-        }
-
-        if (calc[num] == 0) {
-            calc[num] = Math.max(solution(num - 2), solution(num - 3) + arr[num-1]) + arr[num];
+        for (int i = 3; i <= num; i++) {
+            calc[i] = Math.max(calc[i-2], calc[i-3] + arr[i-1]) + arr[i];
         }
 
         return calc[num];
