@@ -28,22 +28,26 @@ public class Main {
             }
         }
 
-        System.out.println(solution());
-        reader.close();
-    }
-
-    private static int solution() {
         for (int i = 0; i < n; i++) {
             calc[n-1][i] = arr[n-1][i];
         }
 
-        for (int i = n-2; i >= 0; i--) {
-            for (int j = 0; j <= i; j++) {
-                calc[i][j] = Math.max(calc[i+1][j], calc[i+1][j+1]) + arr[i][j];
-            }
+        System.out.println(solution(0, 0));
+        reader.close();
+    }
+
+    private static int solution(int depth, int idx) {
+
+        if (depth == n -1) {
+            return calc[depth][idx];
         }
 
-        return calc[0][0];
+        if (calc[depth][idx] == 0) {
+            calc[depth][idx] = Math.max(solution(depth + 1, idx),
+                    solution(depth + 1, idx +1)) + arr[depth][idx];
+        }
+
+        return calc[depth][idx];
     }
 
 
