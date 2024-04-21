@@ -12,8 +12,8 @@ public class Main {
 
         StringTokenizer st = new StringTokenizer(reader.readLine());
 
-        int a = Integer.parseInt(st.nextToken());
-        int b = Integer.parseInt(st.nextToken());
+        long a = Integer.parseInt(st.nextToken());
+        long b = Integer.parseInt(st.nextToken());
 
         System.out.println((a + b) * (a - b));
 
