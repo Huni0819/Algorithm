@@ -25,8 +25,10 @@ public class Main {
         int count = 0;
         for (int i = n-1; i >= 0; i--) {
             count++;
-            
-            max = Math.max(arr[i] * count, max);
+            int num = arr[i] * count;
+            if (max <= num) {
+                max = num;
+            }
         }
 
         System.out.println(max);
