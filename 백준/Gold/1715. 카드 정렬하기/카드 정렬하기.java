@@ -1,34 +1,41 @@
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.PriorityQueue;
-import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int count = scanner.nextInt();
 
-        int sum = 0;
+    public static void main(String[] args) throws Exception {
 
+        BufferedReader reader =
+                new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(reader.readLine());
         PriorityQueue<Integer> queue = new PriorityQueue<>();
 
-        for(int i = 0; i < count; i++) {
-            int num = scanner.nextInt();
-
-            queue.add(num);
+        for (int i = 0; i < n; i++) {
+            queue.offer(Integer.parseInt(reader.readLine()));
         }
 
-        while(queue.size() > 1) {
-            int n1 = queue.poll();
-            int n2 = queue.poll();
+        System.out.println(solution(queue));
 
-            sum += (n1 + n2);
+        reader.close();
+    }
 
-            queue.add(n1+n2);
+    private static int solution(PriorityQueue<Integer> queue) {
+
+        if (queue.size() == 1) {
+            return 0;
         }
 
-        System.out.println(sum);
-        scanner.close();
-     }
+        int sum = 0;
+        while (queue.size() > 1) {
+            int num = queue.poll() + queue.poll();
+            sum += num;
 
+            queue.offer(num);
+        }
+
+        return sum;
+    }
 }
