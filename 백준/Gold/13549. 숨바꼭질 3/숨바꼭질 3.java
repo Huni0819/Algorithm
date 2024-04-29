@@ -1,9 +1,6 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
@@ -33,13 +30,12 @@ class Solution {
     }
 
     public void solution() {
-        Queue<Location> queue = new LinkedList<>();
-        int count = 0;
+        Deque<Location> deque = new ArrayDeque<>();
         visited[n] = true;
-        queue.offer(new Location(n, count));
+        deque.offerFirst(new Location(n, 0));
 
-        while (!queue.isEmpty()) {
-            Location now = queue.poll();
+        while (!deque.isEmpty()) {
+            Location now = deque.pollFirst();
 
             if (now.getX() == k) {
                 System.out.println(now.getTime());
@@ -50,26 +46,24 @@ class Solution {
                 continue;
             }
 
-            if (now.getX() > 0) {
-                for (int i = now.getX(); i < 100_001; i *= 2) {
-                    if (!visited[i]) {
-                        queue.offer(new Location(i, now.getTime()));
-                        visited[i] = true;
-                    }
+            if (now.getX() * 2 > 0 && now.getX() * 2 < 100_001) {
+                if (!visited[now.getX() * 2]) {
+                    deque.offerFirst(new Location(now.getX() * 2, now.getTime()));
+                    visited[now.getX() * 2] = true;
                 }
             }
 
             if (now.getX() - 1 >= 0) {
-                if (!visited[now.getX()-1]) {
-                    queue.offer(new Location(now.getX() - 1, now.getTime()+1));
-                    visited[now.getX()-1] = true;
+                if (!visited[now.getX() - 1]) {
+                    deque.offerLast(new Location(now.getX() - 1, now.getTime() + 1));
+                    visited[now.getX() - 1] = true;
                 }
             }
 
             if (now.getX() + 1 < 100_001) {
-                if (!visited[now.getX()+1]) {
-                    queue.offer(new Location(now.getX() + 1, now.getTime()+1));
-                    visited[now.getX()+1] = true;
+                if (!visited[now.getX() + 1]) {
+                    deque.offerLast(new Location(now.getX() + 1, now.getTime() + 1));
+                    visited[now.getX() + 1] = true;
                 }
             }
         }
