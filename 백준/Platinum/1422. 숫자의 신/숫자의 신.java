@@ -41,9 +41,6 @@ class Solution {
 
     public void solution() {
         Arrays.sort(arr, (o1, o2) -> {
-            if (o1.length() == o2.length()) {
-                return o2.compareTo(o1);
-            }
 
             return (o2 + o1).compareTo(o1 + o2);
         });
