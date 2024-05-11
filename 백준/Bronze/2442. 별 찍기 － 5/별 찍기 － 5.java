@@ -1,0 +1,37 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        int n = Integer.parseInt(reader.readLine());
+
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 1; j < n-i; j++) {
+                builder.append(" ");
+            }
+
+            for (int j = n-i; j < n; j++) {
+                builder.append("*");
+            }
+
+            builder.append("*");
+
+            for (int j = n-i; j < n; j++) {
+                builder.append("*");
+            }
+
+            builder.append("\n");
+        }
+
+        System.out.println(builder);
+
+        reader.close();
+
+    }
+}
