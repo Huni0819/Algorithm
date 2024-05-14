@@ -11,19 +11,11 @@ public class Main {
 
     static int n;
     static int m;
-
     static char[][] arr;
-    static int[][] jihoonVisited;
-    static int[][] fireVisited;
-
-    static Queue<Coordinate> fireQueue = new LinkedList<>();
-    static Queue<Coordinate> jihoonQueue = new LinkedList<>();
-
-
-    static Coordinate jihoonFirst;
+    static int[][] visited;
+    static Queue<Coordinate> queue = new LinkedList<>();
 
     public static void main(String[] args) throws Exception {
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         StringTokenizer st = new StringTokenizer(reader.readLine());
@@ -31,76 +23,67 @@ public class Main {
         m = Integer.parseInt(st.nextToken());
 
         arr = new char[n][m];
-        jihoonVisited = new int[n][m];
-        fireVisited = new int[n][m];
+        visited = new int[n][m];
 
         for (int i = 0; i < n; i++) {
             String line = reader.readLine();
             for (int j = 0; j < m; j++) {
                 if (line.charAt(j) == 'J') {
-                    jihoonQueue.offer(new Coordinate(i, j));
-                    jihoonVisited[i][j] = 1;
+                    visited[i][j] = 1;
+                    queue.offer(new Coordinate(i, j, true));
                     arr[i][j] = '.';
                     continue;
-                } else if (line.charAt(j) == 'F') {
-                    fireVisited[i][j] = 1;
-                    fireQueue.offer(new Coordinate(i, j));
                 }
 
                 arr[i][j] = line.charAt(j);
             }
         }
 
-        moveFire();
-        moveJihoon();
-
-        reader.close();
-    }
-
-    private static void moveFire() {
-
-        while (!fireQueue.isEmpty()) {
-            Coordinate now = fireQueue.poll();
-
-            for (int i = 0; i < 4; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
-
-                if (nx < 0 || nx >= n || ny < 0 || ny >= m) {
-                    continue;
-                }
-
-                if (arr[nx][ny] != '#' && fireVisited[nx][ny] == 0) {
-                    fireVisited[nx][ny] = fireVisited[now.getX()][now.getY()] + 1;
-                    fireQueue.offer(new Coordinate(nx, ny));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (arr[i][j] == 'F') {
+                    queue.offer(new Coordinate(i, j, false));
                 }
             }
         }
-    }
 
-    private static void moveJihoon() {
+        while (!queue.isEmpty()) {
+            Coordinate now = queue.poll();
 
-        while (!jihoonQueue.isEmpty()) {
-            Coordinate now = jihoonQueue.poll();
+            if (now.isPerson() && arr[now.getX()][now.getY()] == 'F') {
+                continue;
+            }
 
             for (int i = 0; i < 4; i++) {
                 int nx = now.getX() + dx[i];
                 int ny = now.getY() + dy[i];
 
+                // queue에서 나온게 사람일 경우
                 if (nx < 0 || nx >= n || ny < 0 || ny >= m) {
-                    System.out.println(jihoonVisited[now.getX()][now.getY()]);
-                    return;
+                    if (now.isPerson()) {
+                        System.out.println(visited[now.getX()][now.getY()]);
+                        System.exit(0);
+                    }
+                    // 불 일경우
+                    continue;
                 }
 
-                if (arr[nx][ny] != '#' && jihoonVisited[nx][ny] == 0 && (fireVisited[nx][ny] > jihoonVisited[now.getX()][now.getY()] + 1 || fireVisited[nx][ny] == 0)) {
-                    jihoonQueue.offer(new Coordinate(nx, ny));
-                    jihoonVisited[nx][ny] = jihoonVisited[now.getX()][now.getY()] + 1;
+
+                if (now.isPerson()) {
+                    if (arr[nx][ny] == '.' && visited[nx][ny] == 0) {
+                        queue.offer(new Coordinate(nx, ny, true));
+                        visited[nx][ny] = visited[now.getX()][now.getY()] + 1;
+                    }
+                } else {
+                    if (arr[nx][ny] == '.') {
+                        queue.offer(new Coordinate(nx, ny, false));
+                        arr[nx][ny] = 'F';
+                    }
                 }
             }
         }
 
         System.out.println("IMPOSSIBLE");
-
     }
 }
 
@@ -108,10 +91,12 @@ class Coordinate {
 
     private int x;
     private int y;
+    private boolean isPerson;
 
-    public Coordinate(int x, int y) {
+    public Coordinate(int x, int y, boolean isPerson) {
         this.x = x;
         this.y = y;
+        this.isPerson = isPerson;
     }
 
     public int getX() {
@@ -120,5 +105,9 @@ class Coordinate {
 
     public int getY() {
         return y;
+    }
+
+    public boolean isPerson() {
+        return isPerson;
     }
 }
