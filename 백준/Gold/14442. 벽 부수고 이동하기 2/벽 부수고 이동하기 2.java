@@ -63,9 +63,7 @@ public class Main {
                 if (now.getCount() > 0 && arr[nx][ny] == 1 && visited[nx][ny][now.getCount() - 1] == 0) {
                     queue.offer(new Coord(nx, ny, now.getCount() - 1));
                     visited[nx][ny][now.getCount()-1] = visited[now.getX()][now.getY()][now.getCount()] + 1;
-                }
-
-                if (arr[nx][ny] == 0 && visited[nx][ny][now.getCount()] == 0) {
+                } else if (arr[nx][ny] == 0 && visited[nx][ny][now.getCount()] == 0) {
                     queue.offer(new Coord(nx, ny, now.getCount()));
                     visited[nx][ny][now.getCount()] = visited[now.getX()][now.getY()][now.getCount()] + 1;
                 }
