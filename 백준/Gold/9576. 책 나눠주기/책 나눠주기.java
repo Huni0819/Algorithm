@@ -6,68 +6,70 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static boolean[] book;
+    static int n;
+    static int m;
+
+    static boolean[] visited;
+    static PriorityQueue<Dict> queue;
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         int t = Integer.parseInt(reader.readLine());
 
-        for (int i = 0; i < t; i++) {
+        for (int tc = 0; tc < t; tc++) {
             StringTokenizer st = new StringTokenizer(reader.readLine());
-            int n = Integer.parseInt(st.nextToken());
-            int m = Integer.parseInt(st.nextToken());
 
-            book = new boolean[n+1];
-            int[] count = new int[n+1];
+            n = Integer.parseInt(st.nextToken());
+            m = Integer.parseInt(st.nextToken());
 
-            PriorityQueue<Range> queue = new PriorityQueue<>(m, (o1, o2) -> o1.getB() == o2.getB() ? o2.getA() - o1.getA() : o1.getB() - o2.getB());
+            visited = new boolean[n+1];
 
-            for (int j = 0; j < m; j++) {
+            queue = new PriorityQueue<>(new Comparator<Dict>() {
+                @Override
+                public int compare(Dict o1, Dict o2) {
+                    if (o1.getB() == o2.getB()) {
+                        return o1.getA() - o2.getA();
+                    }
+
+                    return o1.getB() - o2.getB();
+                }
+            });
+
+            for (int i = 0; i < m; i++) {
                 st = new StringTokenizer(reader.readLine());
+                queue.offer(new Dict(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
+            }
 
-                int a = Integer.parseInt(st.nextToken());
-                int b = Integer.parseInt(st.nextToken());
+            int count = 0;
 
-                queue.offer(new Range(a, b));
+            while (!queue.isEmpty()) {
+                Dict now = queue.poll();
 
-                for (int k = a; k <= b; k++) {
-                    count[i]++;
+                for (int i = now.getA(); i <= now.getB(); i++) {
+                    if (!visited[i]) {
+                        count++;
+                        visited[i] = true;
+                        break;
+                    }
                 }
             }
 
-            System.out.println(solution(queue));
+            System.out.println(count);
+
         }
 
         reader.close();
     }
-
-    private static int solution(PriorityQueue<Range> queue) {
-        int result = 0;
-
-        while (!queue.isEmpty()) {
-            Range now = queue.poll();
-
-            for (int i = now.getA(); i <= now.getB(); i++) {
-                if (!book[i]) {
-                    book[i] = true;
-                    result++;
-                    break;
-                }
-            }
-        }
-
-        return result;
-    }
 }
 
-class Range {
+class Dict {
+
     private int a;
     private int b;
 
-    public Range(int a, int b) {
+    public Dict(int a, int b) {
         this.a = a;
         this.b = b;
     }
