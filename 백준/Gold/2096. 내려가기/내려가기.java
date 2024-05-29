@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -10,43 +9,39 @@ public class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         int n = Integer.parseInt(reader.readLine());
-        int[][] arr = new int[n][3];
-        int[][][] dp = new int[n][3][2];
+        int[] min = new int[3];
+        int[] max = new int[3];
 
-        for (int i = 0; i < n; i++) {
-            StringTokenizer st = new StringTokenizer(reader.readLine());
-            for (int j = 0; j < 3; j++) {
-                arr[i][j] = Integer.parseInt(st.nextToken());
-            }
-        }
-
-        for (int i = 0; i < 3; i++) {
-            Arrays.fill(dp[0][i], arr[0][i]);
-        }
+        StringTokenizer st = new StringTokenizer(reader.readLine());
+        min[0] = max[0] = Integer.parseInt(st.nextToken());
+        min[1] = max[1] = Integer.parseInt(st.nextToken());
+        min[2] = max[2] = Integer.parseInt(st.nextToken());
 
         for (int i = 1; i < n; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (j == 0) {
-                    dp[i][j][0] = Math.max(dp[i - 1][j][0], dp[i - 1][j + 1][0]) + arr[i][j];
-                    dp[i][j][1] = Math.min(dp[i - 1][j][1], dp[i - 1][j + 1][1]) + arr[i][j];
-                } else if (j == 2) {
-                    dp[i][j][0] = Math.max(dp[i - 1][j][0], dp[i - 1][j - 1][0]) + arr[i][j];
-                    dp[i][j][1] = Math.min(dp[i - 1][j][1], dp[i - 1][j - 1][1]) + arr[i][j];
-                } else {
-                    dp[i][j][0] = Math.max(dp[i - 1][j][0], Math.max(dp[i - 1][j - 1][0], dp[i - 1][j + 1][0])) + arr[i][j];
-                    dp[i][j][1] = Math.min(dp[i - 1][j][1], Math.min(dp[i - 1][j - 1][1], dp[i - 1][j + 1][1])) + arr[i][j];
-                }
-            }
+            st = new StringTokenizer(reader.readLine());
+
+            int x = Integer.parseInt(st.nextToken());
+            int y = Integer.parseInt(st.nextToken());
+            int z = Integer.parseInt(st.nextToken());
+
+            int min0 = Math.min(min[0], min[1]) + x;
+            int min1 = Math.min(min[0], Math.min(min[1], min[2])) + y;
+            int min2 = Math.min(min[1], min[2]) + z;
+
+            min[0] = min0;
+            min[1] = min1;
+            min[2] = min2;
+
+            int max0 = Math.max(max[0], max[1]) + x;
+            int max1 = Math.max(max[0], Math.max(max[1], max[2])) + y;
+            int max2 = Math.max(max[1], max[2]) + z;
+
+            max[0] = max0;
+            max[1] = max1;
+            max[2] = max2;
+
         }
 
-        int max = Integer.MIN_VALUE;
-        int min = Integer.MAX_VALUE;
-
-        for (int i = 0; i < 3; i++) {
-            max = Math.max(dp[n - 1][i][0], max);
-            min = Math.min(dp[n - 1][i][1], min);
-        }
-
-        System.out.println(max + " " + min);
+        System.out.println(Math.max(max[0], Math.max(max[1], max[2])) + " " + Math.min(min[0], Math.min(min[1], min[2])));
     }
 }
