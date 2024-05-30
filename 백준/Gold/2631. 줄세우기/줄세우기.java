@@ -1,37 +1,40 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
 
+    static int n;
+    static int[] arr;
+    static int[] size;
+
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader =
+                new BufferedReader(new InputStreamReader(System.in));
 
-        int n = Integer.parseInt(reader.readLine());
-
-        int[] arr = new int[n];
-        int[] dp = new int[n];
-
+        n = Integer.parseInt(reader.readLine());
+        arr = new int[n];
+        size = new int[n];
+        
         for (int i = 0; i < n; i++) {
             arr[i] = Integer.parseInt(reader.readLine());
+            size[i] = 1;
         }
 
-        int max = 0;
-
+        int max = 1;
         for (int i = 0; i < n; i++) {
-            dp[i] = 1;
-
             for (int j = 0; j < i; j++) {
-                if (arr[j] < arr[i] && dp[j]+1 > dp[i]) {
-                    dp[i] = dp[j] + 1;
-
-                    max = Math.max(max, dp[i]);
+                if (arr[i] > arr[j]) {
+                    size[i] = Math.max(size[i], size[j]+1);
                 }
             }
+
+            max = Math.max(max, size[i]);
         }
 
         System.out.println(n - max);
 
+        reader.close();
     }
-
 }
