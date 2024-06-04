@@ -5,7 +5,7 @@ public class Main {
 
     static int n;
     static Integer[] dp;
-    static String[] calc;
+    static int[] prev;
 
     public static void main(String[] args) throws Exception {
 
@@ -14,13 +14,21 @@ public class Main {
         n = Integer.parseInt(reader.readLine());
 
         dp = new Integer[n+1];
-        calc = new String[n+1];
+        prev = new int[n+1];
         dp[0] = 0;
         dp[1] = 0;
-        calc[1] = "1";
 
         System.out.println(solution(n));
-        System.out.println(calc[n]);
+
+        StringBuilder builder = new StringBuilder();
+
+        int index = n;
+        while (index != 0) {
+            builder.append(index).append(" ");
+            index = prev[index];
+        }
+
+        System.out.println(builder);
     }
 
     private static Integer solution(int n) {
@@ -44,11 +52,11 @@ public class Main {
         x1 = solution(n-1);
 
         if (x1 <= x2 && x1 <= x3) {
-            calc[n] = n + " " + calc[n-1];
+            prev[n] = n-1;
         } else if (x2 <= x1 && x2 <= x3) {
-            calc[n] = n + " " + calc[n/2];
+            prev[n] = n/2;
         } else {
-            calc[n] = n + " " + calc[n/3];
+            prev[n] = n/3;
         }
 
         return dp[n] = Math.min(x1, Math.min(x2, x3)) + 1;
