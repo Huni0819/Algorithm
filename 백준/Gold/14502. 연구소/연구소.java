@@ -38,15 +38,7 @@ public class Main {
         // 벽 3개를 세워야 한다.
         // 0 3개를 1로 바꿔야함.
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (arr[i][j] == 0) {
-                    arr[i][j] = 1;
-                    solution(1);
-                    arr[i][j] = 0;
-                }
-            }
-        }
+        solution(0);
 
         System.out.println(max);
     }
