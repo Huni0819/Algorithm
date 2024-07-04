@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class Main {
@@ -12,7 +13,7 @@ public class Main {
     static int M;
     static char[][] arr;
 
-    static boolean[][][][] visited;
+    static int[][][][] visited;
 
     public static void main(String[] args) throws Exception {
 
@@ -24,7 +25,7 @@ public class Main {
         M = Integer.parseInt(input[1]);
 
         arr = new char[N][M];
-        visited = new boolean[N][M][N][M];
+        visited = new int[N][M][N][M];
 
         Point init = new Point();
         for (int i = 0; i < N; i++) {
@@ -55,10 +56,10 @@ public class Main {
     private static int solution(Point init) {
         Queue<Point> queue = new LinkedList<>();
         queue.offer(init);
+        visited[init.rx][init.ry][init.bx][init.by] = 1;
 
         while (!queue.isEmpty()) {
             Point now = queue.poll();
-            visited[now.rx][now.ry][now.bx][now.by] = true;
 
             for (int i = 0; i < 4; i++) {
 
@@ -121,7 +122,7 @@ public class Main {
                 }
 
                 if (isR) {
-                    return now.count + 1;
+                    return visited[now.rx][now.ry][now.bx][now.by];
                 }
 
                 if (rx == bx && ry == by) {
@@ -159,8 +160,9 @@ public class Main {
                     }
                 }
 
-                if (!visited[rx][ry][bx][by]) {
-                    queue.offer(new Point(rx, ry, bx, by, now.count + 1));
+                if (visited[rx][ry][bx][by] == 0) {
+                    visited[rx][ry][bx][by] = visited[now.rx][now.ry][now.bx][now.by] + 1;
+                    queue.offer(new Point(rx, ry, bx, by));
                 }
             }
         }
@@ -182,16 +184,14 @@ class Point {
     int ry;
     int bx;
     int by;
-    int count;
 
     public Point() {
     }
 
-    public Point(int rx, int ry, int bx, int by, int count) {
+    public Point(int rx, int ry, int bx, int by) {
         this.rx = rx;
         this.ry = ry;
         this.bx = bx;
         this.by = by;
-        this.count = count;
     }
 }
