@@ -1,63 +1,59 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Stack;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private static BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
-    private static Stack<Character> before = new Stack<>();
-    private static Stack<Character> after = new Stack<>();
-
     public static void main(String[] args) throws Exception {
 
-        String line = reader.readLine();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        for (char c : line.toCharArray()) {
+        Stack<Character> before = new Stack<>();
+        Stack<Character> after = new Stack<>();
+
+        for (char c : reader.readLine().toCharArray()) {
             before.push(c);
         }
 
-        int n = Integer.valueOf(reader.readLine());
+        int N = Integer.parseInt(reader.readLine());
 
-        for (int i = 0; i < n; i++) {
-            StringTokenizer st = new StringTokenizer(reader.readLine());
+        String[] input;
+        for (int i = 0; i < N; i++) {
 
-            switch (st.nextToken()) {
+            input = reader.readLine().split(" ");
+
+            switch (input[0]) {
                 case "L":
-                    if (!before.empty())
+                    if (!before.isEmpty()) {
                         after.push(before.pop());
+                    }
                     break;
                 case "D":
-                    if (!after.empty()) {
+                    if(!after.isEmpty()) {
                         before.push(after.pop());
                     }
                     break;
                 case "B":
-                    if (!before.empty())
+                    if (!before.isEmpty()) {
                         before.pop();
+                    }
                     break;
-                default:
-                    before.push(st.nextToken().charAt(0));
+                case "P":
+                    before.push(input[1].charAt(0));
+                    break;
             }
         }
 
-        StringBuilder sb = new StringBuilder();
-        while (!before.empty()) {
-            sb.append(before.pop());
+        while (!after.isEmpty()) {
+            before.push(after.pop());
         }
 
-        sb.reverse();
+        StringBuilder builder = new StringBuilder();
 
-        while (!after.empty()) {
-            sb.append(after.pop());
+        while (!before.isEmpty()) {
+            builder.append(before.pop());
         }
 
-        writer.write(sb.toString());
-        writer.flush();
+        System.out.println(builder.reverse());
     }
 }
