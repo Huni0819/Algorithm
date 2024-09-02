@@ -7,28 +7,30 @@ public class Main {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        String line = reader.readLine();
+        String N = reader.readLine();
 
         int[] arr = new int[10];
 
-        for (char s : line.toCharArray()) {
-            arr[s - '0']++;
+        for (int i = 0; i < N.length(); i++) {
+
+            arr[N.charAt(i) - '0']++;
         }
 
-        int max = Integer.MIN_VALUE;
-
+        int max = 0;
         for (int i = 0; i < 10; i++) {
-            if (i == 6 || i == 9) {
-                continue;
+            if (i != 6 && i != 9) {
+                max = Math.max(max, arr[i]);
             }
-
-            max = Math.max(max, arr[i]);
         }
 
-        max = Math.max(max, (arr[6] + arr[9] + 1) / 2);
+        int six = (arr[6] + arr[9]) / 2;
+
+        if ((arr[6] + arr[9]) % 2 != 0) {
+            six++;
+        }
+
+        max = Math.max(max, six);
 
         System.out.println(max);
-
-        reader.close();
     }
 }
