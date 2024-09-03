@@ -1,57 +1,82 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 public class Main {
-    public static void main(String[] args) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        List<Integer> list = new ArrayList<>();
+    public static void main(String[] args) throws Exception {
 
-        String numberString = br.readLine();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        int number = Integer.valueOf(numberString);
+        int N = Integer.parseInt(reader.readLine());
+        StringBuilder builder = new StringBuilder();
 
-        String line;
+        Stack stack = new Stack();
+        String[] input;
+        for (int i = 0; i < N; i++) {
+            input = reader.readLine().split(" ");
 
-        for (int i = 0; i < number; i++) {
-            line = br.readLine();
-
-            switch (line) {
+            switch(input[0]) {
+                case "push":
+                    stack.push(Integer.parseInt(input[1]));
+                    break;
                 case "pop":
-                    if (list.isEmpty()) {
-                        System.out.println("-1");
-                    } else {
-                        System.out.println(list.remove(list.size() - 1));
-                    }
+                    builder.append(stack.pop()).append("\n");
                     break;
                 case "size":
-                    System.out.println(list.size());
+                    builder.append(stack.size()).append("\n");
                     break;
                 case "empty":
-                    if (list.isEmpty()) {
-                        System.out.println("1");
-                    } else {
-                        System.out.println("0");
-                    }
+                    builder.append(stack.empty()).append("\n");
                     break;
                 case "top":
-                    if(list.isEmpty()) {
-                        System.out.println("-1");
-                    } else {
-                        System.out.println(list.get(list.size() - 1));
-                    }
-                    break;
-
-                default:
-                    int emptyIndex = line.indexOf(" ");
-                    String intWord = line.substring(emptyIndex + 1);
-
-                    list.add(Integer.valueOf(intWord));
-
+                    builder.append(stack.top()).append("\n");
             }
         }
+
+        System.out.println(builder);
+    }
+}
+
+class Stack {
+
+    int[] arr;
+    int index;
+
+    public Stack() {
+        arr = new int[100];
+        index = 0;
+    }
+
+    public void push(int x) {
+        if (index == arr.length-1) {
+            arr = Arrays.copyOf(arr, arr.length * 2);
+        }
+
+        arr[index++] = x;
+    }
+
+    public int pop() {
+        if (index == 0) {
+            return -1;
+        }
+
+        return arr[index-- - 1];
+    }
+
+    public int size() {
+        return index;
+    }
+
+    public int empty() {
+        return index == 0 ? 1 : 0;
+    }
+
+    public int top() {
+        if (index == 0) {
+            return -1;
+        }
+
+        return arr[index - 1];
     }
 }
