@@ -1,31 +1,28 @@
-
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.Stack;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
 
-        int n = scanner.nextInt();
+    public static void main(String[] args) throws Exception {
 
-        System.out.println(solution(n, scanner));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        scanner.close();
-    }
+        int K = Integer.parseInt(reader.readLine());
 
-    private static int solution(int n, Scanner scanner) {
         Stack<Integer> stack = new Stack<>();
-
-        for (int i = 0; i < n; i++) {
-            int num = scanner.nextInt();
+        long sum = 0L;
+        for (int i = 0; i < K; i++) {
+            int num = Integer.parseInt(reader.readLine());
 
             if (num == 0) {
-                stack.pop();
+                sum -= stack.pop();
             } else {
+                sum += num;
                 stack.push(num);
             }
         }
 
-        return stack.stream().reduce(0, (x, y) -> x + y);
+        System.out.println(sum);
     }
 }
