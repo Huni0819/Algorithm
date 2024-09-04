@@ -22,13 +22,9 @@ public class Main {
 
         for (int i = 0; i < N; i++) {
 
-            while (!stack.isEmpty()) {
-                if(arr[stack.peek()] < arr[i]) {
-                    arr[stack.peek()] = arr[i];
-                    stack.pop();
-                } else {
-                    break;
-                }
+            while (!stack.isEmpty() && arr[stack.peek()] < arr[i]) {
+                arr[stack.pop()] = arr[i];
+                
             }
 
             stack.push(i);
@@ -38,11 +34,11 @@ public class Main {
             arr[stack.pop()] = -1;
         }
 
-        StringJoiner joiner = new StringJoiner(" ");
+        StringBuilder builder = new StringBuilder();
         for (int i = 0; i < N; i++) {
-            joiner.add(Integer.toString(arr[i]));
+            builder.append(arr[i]).append(" ");
         }
 
-        System.out.println(joiner);
+        System.out.println(builder);
     }
 }
