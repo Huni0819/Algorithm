@@ -1,162 +1,117 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int n = Integer.parseInt(br.readLine());
+    public static void main(String[] args) throws Exception {
 
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        int N = Integer.parseInt(reader.readLine());
+
+        String[] input;
         Deque deque = new Deque();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < N; i++) {
+            input = reader.readLine().split(" ");
 
-        for (int i = 0; i < n; i++) {
-            String line = br.readLine();
-
-            String[] info = line.split(" ");
-
-            switch (info[0]) {
+            switch(input[0]) {
                 case "push_front":
-                    deque.pushFront(Integer.parseInt(info[1]));
+                    deque.pushFront(Integer.parseInt(input[1]));
                     break;
                 case "push_back":
-                    deque.pushBack(Integer.parseInt(info[1]));
+                    deque.pushBack(Integer.parseInt(input[1]));
                     break;
                 case "pop_front":
-                    System.out.println(deque.popFront());
+                    builder.append(deque.popFront())
+                            .append("\n");
                     break;
                 case "pop_back":
-                    System.out.println(deque.popBack());
+                    builder.append(deque.popBack())
+                            .append("\n");
                     break;
                 case "size":
-                    System.out.println(deque.size());
+                    builder.append(deque.size())
+                            .append("\n");
                     break;
                 case "empty":
-                    System.out.println(deque.empty());
+                    builder.append(deque.empty())
+                            .append("\n");
                     break;
                 case "front":
-                    System.out.println(deque.front());
+                    builder.append(deque.getFront())
+                            .append("\n");
                     break;
                 case "back":
-                    System.out.println(deque.back());
+                    builder.append(deque.getBack())
+                            .append("\n");
                     break;
             }
         }
+
+        System.out.println(builder);
     }
 }
 
 class Deque {
-    private int count;
-    private Node head;
-    private Node tail;
 
-    private class Node {
-        int item;
-        Node next;
-        Node previous;
-
-        public Node(int item) {
-            this.item = item;
-            this.next = null;
-            this.previous = null;
-        }
-    }
+    List<Integer> list;
 
     public Deque() {
-        count = 0;
-        head = null;
-        tail = null;
+        this.list = new ArrayList<>();
     }
 
-    public int empty() {
-        return count == 0 ? 1 : 0;
+    public void pushFront(int x) {
+        list.add(0, x);
     }
 
-    public void pushFront(int item) {
-        Node newNode = new Node(item);
-
-        if (head == null) {
-            head = newNode;
-            tail = head;
-        } else {
-            newNode.next = head;
-            head.previous = newNode;
-            head = newNode;
-        }
-
-        count++;
-    }
-
-    public void pushBack(int item) {
-        Node newNode = new Node(item);
-
-        if(head == null) {
-            head = newNode;
-            tail = head;
-        } else {
-            newNode.previous = tail;
-            tail.next = newNode;
-            tail = newNode;
-        }
-
-        count++;
+    public void pushBack(int x) {
+        list.add(x);
     }
 
     public int popFront() {
-        if (empty() == 1) {
+        if (isEmpty()) {
             return -1;
         }
 
-        int item = head.item;
-
-        if (head.next == null) {
-            head = null;
-            tail = null;
-        } else {
-            head = head.next;
-            head.previous = null;
-        }
-
-        count--;
-
-        return item;
+        return list.remove(0);
     }
 
     public int popBack() {
-        if (empty() == 1) {
+        if (isEmpty()) {
             return -1;
         }
 
-        int item = tail.item;
-
-        if (tail.previous == null) {
-            head = null;
-            tail = null;
-        } else {
-            tail = tail.previous;
-            tail.next = null;
-        }
-
-        count--;
-
-        return item;
-    }
-
-    public int front() {
-        if (empty() == 1) {
-            return -1;
-        }
-        return head.item;
-    }
-
-    public int back() {
-        if (empty() == 1) {
-            return -1;
-        }
-        return tail.item;
+        return list.remove(list.size() - 1);
     }
 
     public int size() {
-        return count;
+        return list.size();
+    }
+
+    public int empty() {
+        return size() == 0 ? 1 : 0;
+    }
+
+    public int getFront() {
+        if (isEmpty()) {
+            return -1;
+        }
+
+        return list.get(0);
+    }
+
+    public int getBack() {
+        if (isEmpty()) {
+            return -1;
+        }
+
+        return list.get(list.size() - 1);
+    }
+
+    private boolean isEmpty() {
+        return empty() == 1;
     }
 }
