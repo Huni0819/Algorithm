@@ -1,98 +1,95 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws NumberFormatException, IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int statementNumber = Integer.valueOf(br.readLine());
+    public static void main(String[] args) throws Exception {
 
-        MyQueue myQueue = new MyQueue();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        for (int i = 0; i < statementNumber; i++) {
-            String line = br.readLine();
+        int N = Integer.parseInt(reader.readLine());
 
-            switch (line) {
+        String[] input;
+        Queue queue = new Queue();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < N; i++) {
+            input = reader.readLine().split(" ");
+
+            switch (input[0]) {
+                case "push":
+                    queue.push(Integer.parseInt(input[1]));
+                    break;
                 case "pop":
-                    System.out.println(myQueue.pop());
+                    builder.append(queue.pop())
+                            .append("\n");
                     break;
                 case "size":
-                    System.out.println(myQueue.size());
+                    builder.append(queue.size())
+                            .append("\n");
                     break;
                 case "empty":
-                    System.out.println(myQueue.empty());
+                    builder.append(queue.empty())
+                            .append("\n");
                     break;
                 case "front":
-                    System.out.println(myQueue.front());
+                    builder.append(queue.front())
+                            .append("\n");
                     break;
                 case "back":
-                    System.out.println(myQueue.back());
+                    builder.append(queue.back())
+                            .append("\n");
                     break;
-                default:
-                    int index = line.indexOf(" ");
-                    int pushNumber = Integer.valueOf(line.substring(index + 1));
-                    myQueue.push(pushNumber);
             }
         }
 
+        System.out.println(builder);
     }
 }
 
-class MyQueue {
-    private int[] numbers;
-    private static int count = 0;
+class Queue {
 
-    public MyQueue() {
-        numbers = new int[10000];
+    List<Integer> list;
 
+    public Queue() {
+        list = new ArrayList<>();
     }
 
     public void push(int x) {
-        numbers[count++] = x;
+        list.add(x);
     }
 
     public int pop() {
-        if (count == 0) {
+        if (list.size() == 0) {
             return -1;
         }
-        int popNumber = numbers[0];
 
-        for (int i = 1; i < count; i++) {
-            numbers[i - 1] = numbers[i];
-        }
-
-        count--;
-
-        return popNumber;
+        return list.remove(0);
     }
 
     public int size() {
-        return this.count;
+        return list.size();
     }
 
     public int empty() {
-        if (count == 0) {
-            return 1;
-        }
-
-        return 0;
+        return list.size() == 0 ? 1 : 0;
     }
 
     public int front() {
-        if (count == 0) {
+        if (list.size() == 0) {
             return -1;
         }
 
-        return numbers[0];
+        return list.get(0);
     }
 
     public int back() {
-        if (count == 0) {
+        if (list.size() == 0) {
             return -1;
         }
 
-        return numbers[count - 1];
+        return list.get(list.size()-1);
     }
-
 }
