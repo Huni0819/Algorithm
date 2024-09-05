@@ -1,87 +1,67 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.StringJoiner;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        int t = Integer.parseInt(reader.readLine());
+        StringBuilder builder = new StringBuilder();
+        int T = Integer.parseInt(reader.readLine());
 
-        for (int i = 0; i < t; i++) {
-            String command = reader.readLine();
+        for (int tc = 0; tc < T; tc++) {
+            String P = reader.readLine();
 
-            int n = Integer.parseInt(reader.readLine());
+            int N = Integer.parseInt(reader.readLine());
 
-            String arrayString = reader.readLine();
+            String line = reader.readLine();
+            line = line.substring(1, line.length() - 1);
 
-            Deque<Integer> deque = parse(n, arrayString);
+            Deque<Integer> deque = new ArrayDeque<>();
+            String[] arr = line.split(",");
+            for (int i = 0; i < N; i++) {
+                deque.offer(Integer.parseInt(arr[i]));
+            }
 
-            solution(command, deque);
+            builder.append(solution(P, deque)).append("\n");
         }
 
-        reader.close();
+        System.out.println(builder);
     }
 
-    private static Deque<Integer> parse(int n, String string) {
-        if (n == 0) {
-            return new LinkedList<>();
-        }
+    private static String solution(String P, Deque<Integer> deque) {
+        boolean direction = true;
 
-        Deque<Integer> deque = new LinkedList<>();
+        for (char c : P.toCharArray()) {
+            switch (c) {
+                case 'R':
+                    direction = !direction;
+                    break;
+                case 'D':
+                    if (deque.isEmpty()) {
+                        return "error";
+                    }
 
-        StringTokenizer st = new StringTokenizer(string.substring(1, string.length() - 1), ", ");
-
-        for (int i = 0; i < n; i++) {
-            deque.add(Integer.parseInt(st.nextToken()));
-        }
-
-        return deque;
-    }
-
-    private static void solution(String command, Deque<Integer> deque) {
-        boolean state = true;
-        for (char c : command.toCharArray()) {
-
-            if (c == 'R') {
-                state = !state;
-            } else {
-                if (deque.isEmpty()) {
-                    System.out.println("error");
-                    return;
-                }
-
-                if (state) {
-                    deque.removeFirst();
-                } else {
-                    deque.removeLast();
-                }
-
+                    if (direction) {
+                        deque.pollFirst();
+                    } else {
+                        deque.pollLast();
+                    }
             }
         }
 
-        print(deque, state);
-    }
-
-    private static void print(Deque<Integer> deque, boolean state) {
-        StringBuilder builder = new StringBuilder();
-
-        List<Integer> list = deque.stream().collect(Collectors.toList());
-
-        if (!state) {
-            Collections.reverse(list);
+        StringBuilder builder = new StringBuilder("[");
+        StringJoiner joiner = new StringJoiner(",");
+        while (!deque.isEmpty()) {
+            joiner.add(Integer.toString(direction ? deque.pollFirst() : deque.pollLast()));
         }
 
-        builder.append("[")
-                .append(String.join(",", list.stream()
-                        .map(num -> Integer.toString(num))
-                        .collect(Collectors.toList())))
-                .append("]");
+        builder.append(joiner).append("]");
 
-        System.out.println(builder);
+        return builder.toString();
     }
 }
