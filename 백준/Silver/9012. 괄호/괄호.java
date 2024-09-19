@@ -1,46 +1,38 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.Stack;
 
 public class Main {
 
-    static final String YES = "YES";
-    static final String NO = "NO";
-
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        BufferedWriter writer =
-                new BufferedWriter(new OutputStreamWriter(System.out));
-
-        int t = Integer.parseInt(reader.readLine());
+        int T = Integer.parseInt(reader.readLine());
 
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < t; i++) {
-            boolean flag = true;
-            int count = 0;
+        loop : for (int tc = 0; tc < T; tc++) {
+            Stack<Character> stack = new Stack<>();
             String line = reader.readLine();
 
             for (char c : line.toCharArray()) {
-                count = c == '(' ? count + 1 : count - 1;
 
-                if (count < 0) {
-                    flag = false;
-                    break;
+                if (c == '(') {
+                    stack.push(c);
+                } else if (c == ')') {
+
+                    if (stack.isEmpty()) {
+                        builder.append("NO").append("\n");
+                        continue loop;
+                    } else {
+                        stack.pop();
+                    }
                 }
             }
 
-            builder.append(flag && count == 0 ? YES : NO).append("\n");
+            builder.append(stack.isEmpty() ? "YES" : "NO").append("\n");
         }
 
-        writer.write(builder.toString());
-        writer.flush();
-
-        writer.close();
-        reader.close();
+        System.out.println(builder);
     }
 }
