@@ -2,87 +2,78 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
 
+    static int[][] d = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
     static int n;
     static int m;
+
     static int[][] arr;
-    static int[][] visited;
+    static boolean[][] visited;
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
+        String[] input = reader.readLine().split(" ");
+        n = Integer.parseInt(input[0]);
+        m = Integer.parseInt(input[1]);
 
-        arr = new int[n+1][m+1];
-        visited = new int[n+1][m+1];
+        arr = new int[n][m];
+        visited = new boolean[n][m];
 
-        String line;
-        for (int i = 1; i <= n; i++) {
-            line = reader.readLine();
+        for (int i = 0; i < n; i++) {
+            String line = reader.readLine();
 
-            for (int j = 1; j <= m; j++) {
-                arr[i][j] = Integer.parseInt(Character.toString(line.charAt(j-1)));
+            for (int j = 0; j < m; j++) {
+                arr[i][j] = Integer.parseInt(Character.toString(line.charAt(j)));
             }
         }
 
-        solution(1, 1);
-
-        reader.close();
+        solution();
     }
 
-    private static void solution(int x, int y) {
-        Queue<Integer> xQueue = new LinkedList<>();
-        Queue<Integer> yQueue = new LinkedList<>();
-        xQueue.offer(x);
-        yQueue.offer(y);
-        visited[x][y] = 1;
+    private static void solution() {
+        Queue<Coord> queue = new LinkedList<>();
+        queue.offer(new Coord(0, 0, 1));
+        visited[0][0] = true;
 
-        while (!xQueue.isEmpty() && !yQueue.isEmpty()) {
-            int nowX = xQueue.poll();
-            int nowY = yQueue.poll();
-
-            if (nowX == n && nowY == m) {
-                System.out.println(visited[nowX][nowY]);
-                return;
-            }
+        while(!queue.isEmpty()) {
+            Coord now = queue.poll();
 
             for (int i = 0; i < 4; i++) {
-                int nextX = nowX;
-                int nextY = nowY;
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
 
-                if (i == 0) {
-                    nextX -= 1;
-                } else if (i == 1) {
-                    nextY -= 1;
-                } else if (i == 2) {
-                    nextX += 1;
-                } else {
-                    nextY += 1;
-                }
-
-                if ((nextX < 1 || nextY < 1) || (nextX > n || nextY > m)) {
+                if (nx < 0 || nx >= n || ny < 0 || ny >= m || visited[nx][ny]) {
                     continue;
                 }
 
-                if (visited[nextX][nextY] != 0) {
-                    continue;
+                if (nx == n-1 && ny == m-1) {
+                    System.out.println(now.count+1);
+                    System.exit(0);
                 }
 
-                if (arr[nextX][nextY] == 1) {
-                    visited[nextX][nextY] = visited[nowX][nowY] + 1;
-                    xQueue.offer(nextX);
-                    yQueue.offer(nextY);
+                if (arr[nx][ny] == 1) {
+                    visited[nx][ny] = true;
+                    queue.offer(new Coord(nx, ny, now.count + 1));
                 }
             }
         }
     }
+}
 
+class Coord {
 
+    int x;
+    int y;
+    int count;
+
+    public Coord(int x, int y, int count) {
+        this.x = x;
+        this.y = y;
+        this.count = count;
+    }
 }
