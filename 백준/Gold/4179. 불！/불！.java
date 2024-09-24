@@ -1,82 +1,75 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class Main {
 
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, -1, 1};
+    static int[][] d = {{1, 0}, {-1, 0}, {0, -1}, {0, 1}};
 
-    static int n;
-    static int m;
+    static int R;
+    static int C;
     static char[][] arr;
     static int[][] visited;
-    static Queue<Coordinate> queue = new LinkedList<>();
+
+    static Deque<Coord> deque = new ArrayDeque<>();
+
 
     public static void main(String[] args) throws Exception {
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
+        String[] input = reader.readLine().split(" ");
+        R = Integer.parseInt(input[0]);
+        C = Integer.parseInt(input[1]);
 
-        arr = new char[n][m];
-        visited = new int[n][m];
+        arr = new char[R][C];
+        visited = new int[R][C];
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < R; i++) {
             String line = reader.readLine();
-            for (int j = 0; j < m; j++) {
-                if (line.charAt(j) == 'J') {
-                    visited[i][j] = 1;
-                    queue.offer(new Coordinate(i, j, true));
-                    arr[i][j] = '.';
-                    continue;
-                }
 
+            for (int j = 0; j < C; j++) {
                 arr[i][j] = line.charAt(j);
-            }
-        }
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (arr[i][j] == 'F') {
-                    queue.offer(new Coordinate(i, j, false));
+                if (arr[i][j] == 'J') {
+                    arr[i][j] = '.';
+                    deque.offerLast(new Coord(i, j, true));
+                    visited[i][j] = 1;
+                } else if (arr[i][j] == 'F') {
+                    deque.offerFirst(new Coord(i, j, false));
+                    visited[i][j] = 1;
                 }
             }
         }
 
-        while (!queue.isEmpty()) {
-            Coordinate now = queue.poll();
+        solution();
+    }
 
-            if (now.isPerson() && arr[now.getX()][now.getY()] == 'F') {
-                continue;
-            }
+    private static void solution() {
+
+        while (!deque.isEmpty()) {
+            Coord now = deque.pollFirst();
 
             for (int i = 0; i < 4; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
 
-                // queue에서 나온게 사람일 경우
-                if (nx < 0 || nx >= n || ny < 0 || ny >= m) {
-                    if (now.isPerson()) {
-                        System.out.println(visited[now.getX()][now.getY()]);
+                if (nx < 0 || nx >= R || ny < 0 || ny >= C) {
+
+                    if (now.isJihoon) {
+                        System.out.println(visited[now.x][now.y]);
                         System.exit(0);
                     }
-                    // 불 일경우
+
                     continue;
                 }
 
+                if (arr[nx][ny] == '.' && visited[nx][ny] == 0) {
+                    deque.offerLast(new Coord(nx, ny, now.isJihoon));
+                    visited[nx][ny] = visited[now.x][now.y] + 1;
 
-                if (now.isPerson()) {
-                    if (arr[nx][ny] == '.' && visited[nx][ny] == 0) {
-                        queue.offer(new Coordinate(nx, ny, true));
-                        visited[nx][ny] = visited[now.getX()][now.getY()] + 1;
-                    }
-                } else {
-                    if (arr[nx][ny] == '.') {
-                        queue.offer(new Coordinate(nx, ny, false));
+                    if (!now.isJihoon) {
                         arr[nx][ny] = 'F';
                     }
                 }
@@ -87,27 +80,15 @@ public class Main {
     }
 }
 
-class Coordinate {
+class Coord {
 
-    private int x;
-    private int y;
-    private boolean isPerson;
+    int x;
+    int y;
+    boolean isJihoon;
 
-    public Coordinate(int x, int y, boolean isPerson) {
+    public Coord(int x, int y, boolean isJihoon) {
         this.x = x;
         this.y = y;
-        this.isPerson = isPerson;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public boolean isPerson() {
-        return isPerson;
+        this.isJihoon = isJihoon;
     }
 }
