@@ -2,91 +2,83 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] dx = {1, 2, 2, 1, -1, -2, -2, -1};
-    static int[] dy = {2, 1, -1, -2, -2, -1, 1, 2};
+    static int[][] d = {
+            {1, 2}, {2, 1}, {2, -1}, {1, -2},
+            {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}
+    };
 
-    static int N;
-    static int[][] board;
-    static Coordinate target;
-    static Queue<Coordinate> queue;
+    static int l;
+    static int[][] arr;
+    static Queue<Coord> queue = new LinkedList<>();
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder builder = new StringBuilder();
 
         int T = Integer.parseInt(reader.readLine());
 
         for (int tc = 0; tc < T; tc++) {
+            queue.clear();
 
-            N = Integer.parseInt(reader.readLine());
-            board = new int[N][N];
+            l = Integer.parseInt(reader.readLine());
 
-            StringTokenizer st = new StringTokenizer(reader.readLine());
-            Coordinate start = new Coordinate(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
-            board[start.getX()][start.getY()] = 1;
-            queue = new LinkedList<>();
-            queue.offer(start);
+            arr = new int[l][l];
 
-            st = new StringTokenizer(reader.readLine());
-            target = new Coordinate(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+            String[] input = reader.readLine().split(" ");
+            int x = Integer.parseInt(input[0]);
+            int y = Integer.parseInt(input[1]);
+            arr[x][y] = 1; // 나이트의 현재 위치
 
-            if (start.getX() == target.getX() && start.getY() == target.getY()) {
-                System.out.println(0);
-                continue;
-            }
+            queue.offer(new Coord(x, y));
 
-            bfs();
+            input = reader.readLine().split(" ");
+            arr[Integer.parseInt(input[0])][Integer.parseInt(input[1])] = -1; // 이동하려는 위치
+
+            builder.append(solution())
+                    .append("\n");
         }
 
-        reader.close();
+        System.out.println(builder);
     }
 
-    private static void bfs() {
-
+    private static int solution() {
         while (!queue.isEmpty()) {
-            Coordinate now = queue.poll();
+            Coord now = queue.poll();
 
-            for (int i = 0; i < 8; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
+            for (int i = 0; i < d.length; i++) {
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
 
-                if (nx < 0 || nx >= N || ny < 0 || ny >= N) {
+                if (nx < 0 || nx >= l || ny < 0 || ny >= l || arr[nx][ny] >= 1) {
                     continue;
                 }
 
-                if (nx == target.getX() && ny == target.getY()) {
-                    System.out.println(board[now.getX()][now.getY()]);
-                    return;
+                if (arr[nx][ny] == -1) {
+                    return arr[now.x][now.y];
                 }
 
-                if (board[nx][ny] == 0) {
-                    board[nx][ny] = board[now.getX()][now.getY()] + 1;
-                    queue.offer(new Coordinate(nx, ny));
+                if (arr[nx][ny] == 0) {
+                    queue.offer(new Coord(nx, ny));
+                    arr[nx][ny] = arr[now.x][now.y] + 1;
                 }
             }
         }
+
+        return 0; // 시작 지점과 도착 지점이 같은 경우
     }
 }
 
-class Coordinate {
+class Coord {
 
-    private int x;
-    private int y;
+    int x;
+    int y;
 
-    public Coordinate(int x, int y) {
+    public Coord(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 }
