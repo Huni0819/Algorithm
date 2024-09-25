@@ -5,98 +5,91 @@ import java.util.Queue;
 
 public class Main {
 
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, -1, 1};
+    static int[][] d = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
     static int N;
     static char[][][] arr;
     static boolean[][] visited;
+    static Queue<Coord> queue;
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
+        StringBuilder builder = new StringBuilder();
+
         N = Integer.parseInt(reader.readLine());
-        arr = new char[N][N][2];
+        arr = new char[2][N][N];
 
         for (int i = 0; i < N; i++) {
             String line = reader.readLine();
 
             for (int j = 0; j < N; j++) {
-                arr[i][j][0] = line.charAt(j);
-                arr[i][j][1] = line.charAt(j) == 'G' ? 'R' : line.charAt(j);
+
+                arr[0][i][j] = line.charAt(j);
+                arr[1][i][j] = line.charAt(j) == 'R' ? 'G' : line.charAt(j);
             }
         }
 
-        int count1 = 0;
-        visited = new boolean[N][N];
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (!visited[i][j]) {
-                    bfs(i, j, true);
-                    count1++;
-                }
-            }
-        }
+        builder.append(solution(arr[0]))
+                .append(" ")
+                .append(solution(arr[1]));
 
-        int count2 = 0;
-        visited = new boolean[N][N];
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (!visited[i][j]) {
-                    bfs(i, j, false);
-                    count2++;
-                }
-            }
-        }
-
-        System.out.println(count1 + " " + count2);
-        reader.close();
+        System.out.println(builder);
     }
 
-    private static void bfs(int x, int y, boolean check) {
-        int index = check ? 0 : 1;
+    private static int solution(char[][] arr) {
+        visited = new boolean[N][N];
+        queue = new LinkedList<>();
 
-        Queue<Coordinate> queue = new LinkedList<>();
-        queue.offer(new Coordinate(x, y));
-        visited[x][y] = true;
+        int count = 0;
 
-        while (!queue.isEmpty()) {
-            Coordinate now = queue.poll();
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+
+                if (!visited[i][j]) {
+                    visited[i][j] = true;
+                    queue.offer(new Coord(i, j));
+                    count++;
+                    bfs(arr);
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private static void bfs(char[][] arr) {
+
+        while(!queue.isEmpty()) {
+
+            Coord now = queue.poll();
 
             for (int i = 0; i < 4; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
 
-                if (nx < 0 || nx >= N || ny < 0 || ny >= N) {
+                if (nx < 0 || nx >= N || ny < 0 || ny >= N || visited[nx][ny]) {
                     continue;
                 }
 
-                if (!visited[nx][ny] && arr[nx][ny][index] == arr[now.getX()][now.getY()][index]) {
-                    queue.offer(new Coordinate(nx, ny));
+                if (arr[now.x][now.y] == arr[nx][ny]) {
                     visited[nx][ny] = true;
+                    queue.offer(new Coord(nx, ny));
                 }
             }
         }
     }
+
 }
 
+class Coord {
 
-class Coordinate {
+    int x;
+    int y;
 
-    private int x;
-    private int y;
-
-    public Coordinate(int x, int y) {
+    public Coord(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 }
