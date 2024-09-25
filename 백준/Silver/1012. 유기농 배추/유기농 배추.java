@@ -2,99 +2,100 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, -1, 1};
+    static int[][] d = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-    static int n;
-    static int m;
-    static int k;
-
+    static int N;
+    static int M;
+    static int K;
     static int[][] arr;
     static boolean[][] visited;
+    static Queue<Coord> queue;
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        int t = Integer.parseInt(reader.readLine());
+        StringBuilder builder = new StringBuilder();
+        int T = Integer.parseInt(reader.readLine());
 
+        for (int tc = 0; tc < T; tc++) {
 
-        for (int i = 0; i < t; i++) {
-            StringTokenizer st = new StringTokenizer(reader.readLine());
+            String[] input = reader.readLine().split(" ");
 
-            n = Integer.parseInt(st.nextToken());
-            m = Integer.parseInt(st.nextToken());
-            k = Integer.parseInt(st.nextToken());
+            M = Integer.parseInt(input[0]);
+            N = Integer.parseInt(input[1]);
+            K = Integer.parseInt(input[2]);
 
-            arr = new int[n][m];
-            visited = new boolean[n][m];
+            arr = new int[M][N];
+            visited = new boolean[M][N];
 
-            for (int j = 0; j < k; j++) {
-                st = new StringTokenizer(reader.readLine());
+            for (int i = 0; i < K; i++) {
+                input = reader.readLine().split(" ");
+                int x = Integer.parseInt(input[0]);
+                int y = Integer.parseInt(input[1]);
 
-                arr[Integer.parseInt(st.nextToken())][Integer.parseInt(st.nextToken())] = 1;
+                arr[x][y] = 1;
             }
 
-            int count = 0;
-
-            for (int j = 0; j < n; j++) {
-                for (int l = 0; l < m; l++) {
-                    if (arr[j][l] == 1 && !visited[j][l]) {
-                        bfs(j, l);
-                        count++;
-                    }
-                }
-            }
-
-            System.out.println(count);
+            builder.append(solution()).append("\n");
         }
-        reader.close();
+
+        System.out.println(builder);
     }
 
-    private static void bfs(int x, int y) {
-        Queue<Coordinate> queue = new LinkedList<>();
-        queue.offer(new Coordinate(x, y));
-        visited[x][y] = true;
+    private static int solution() {
+        queue = new LinkedList<>();
+        int count = 0;
 
-        while (!queue.isEmpty()) {
-            Coordinate now = queue.poll();
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+
+                if (arr[i][j] == 1 && !visited[i][j]) {
+                    count++;
+                    visited[i][j] = true;
+                    queue.offer(new Coord(i, j));
+                    bfs();
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private static void bfs() {
+
+        while(!queue.isEmpty()) {
+
+            Coord now = queue.poll();
 
             for (int i = 0; i < 4; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
 
-                if (nx < 0 || nx >= n || ny < 0 || ny >= m) {
+                if (nx < 0 || nx >= M || ny < 0 || ny >= N || visited[nx][ny]) {
                     continue;
                 }
 
-                if (!visited[nx][ny] && arr[nx][ny] == 1) {
+                if (arr[nx][ny] == 1) {
+                    queue.offer(new Coord(nx, ny));
                     visited[nx][ny] = true;
-                    queue.offer(new Coordinate(nx, ny));
                 }
             }
         }
     }
+
 }
 
-class Coordinate {
+class Coord {
 
-    private int x;
-    private int y;
+    int x;
+    int y;
 
-    public Coordinate(int x, int y) {
+    public Coord(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 }
