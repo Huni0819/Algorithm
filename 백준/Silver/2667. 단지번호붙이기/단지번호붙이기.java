@@ -1,78 +1,96 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class Main {
 
-    static int n;
-    static int count = 0;
-    static int[][] arr;
-    static List<Integer> result = new ArrayList<>();
+    static int[][] d = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
+
+    static int N;
+    static char[][] arr;
     static boolean[][] visited;
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder builder = new StringBuilder();
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
 
-        n = Integer.parseInt(reader.readLine());
+        N = Integer.parseInt(reader.readLine());
 
-        arr = new int[n][n];
-        visited = new boolean[n][n];
+        arr = new char[N][N];
+        visited = new boolean[N][N];
 
-        String line;
-        for (int i = 0; i < n; i++) {
-            line = reader.readLine();
+        for (int i = 0; i < N; i++) {
+            String line = reader.readLine();
 
-            for (int j = 0; j < n; j++) {
-                arr[i][j] = Integer.parseInt(Character.toString(line.charAt(j)));
+            for (int j = 0; j < N; j++) {
+                arr[i][j] = line.charAt(j);
             }
-
         }
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (arr[i][j] == 1 && !visited[i][j]) {
-                    solution(i, j);
-                    result.add(count);
-                    count = 0;
+        int count = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (arr[i][j] == '1' && !visited[i][j]) {
+                    count++;
+                    pq.offer(solution(i, j));
                 }
             }
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append(result.size()).append("\n");
+        builder.append(count)
+                .append("\n");
 
-        Collections.sort(result);
-
-        for (int i = 0; i < result.size(); i++) {
-            builder.append(result.get(i)).append("\n");
+        while (!pq.isEmpty()) {
+            builder.append(pq.poll())
+                    .append("\n");
         }
 
         System.out.println(builder);
-
-        reader.close();
     }
 
-    private static void solution(int x, int y) {
+    static int solution(int x, int y) {
+        Queue<Coord> queue = new LinkedList<>();
+        queue.offer(new Coord(x, y));
         visited[x][y] = true;
 
-        if (x != 0 && !visited[x-1][y] && arr[x-1][y] == 1) {
-            solution(x-1, y);
+        int count = 1;
+
+        while (!queue.isEmpty()) {
+            Coord now = queue.poll();
+
+            for (int i = 0; i < d.length; i++) {
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
+
+                if (nx < 0 || ny < 0 || nx >= N || ny >= N || visited[nx][ny]) {
+                    continue;
+                }
+
+                if (arr[nx][ny] == '1') {
+                    count++;
+                    queue.offer(new Coord(nx, ny));
+                    visited[nx][ny] = true;
+                }
+            }
         }
 
-        if (y != 0 && !visited[x][y-1] && arr[x][y-1] == 1) {
-            solution(x, y-1);
-        }
+        return count;
+    }
+}
 
-        if (x < n-1 && !visited[x+1][y] && arr[x+1][y] == 1) {
-            solution(x+1, y);
-        }
+class Coord {
 
-        if (y < n-1 && !visited[x][y+1] && arr[x][y+1] == 1) {
-            solution(x, y+1);
-        }
+    int x;
+    int y;
 
-        count++;
+    public Coord(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }
