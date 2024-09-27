@@ -2,115 +2,115 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] dx = {-1, 1, 0, 0, 0, 0};
-    static int[] dy = {0, 0, -1, 1, 0, 0};
-    static int[] dz = {0, 0, 0, 0, -1, 1};
+    static int[][] d = {
+            {1, 0, 0},
+            {-1, 0, 0},
+            {0, 1, 0},
+            {0, -1, 0},
+            {0, 0, 1},
+            {0 ,0, -1}
+    };
 
     static int L;
     static int R;
     static int C;
+
     static char[][][] arr;
     static int[][][] visited;
-    static Coordinate start;
+
+    static Queue<Coord> queue = new LinkedList<>();
+
+    static StringBuilder builder = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
-            StringTokenizer st = new StringTokenizer(reader.readLine());
-            L = Integer.parseInt(st.nextToken());
-            R = Integer.parseInt(st.nextToken());
-            C = Integer.parseInt(st.nextToken());
+            String[] input = reader.readLine().split(" ");
+            L = Integer.parseInt(input[0]);
+            R = Integer.parseInt(input[1]);
+            C = Integer.parseInt(input[2]);
 
             if (L == 0 && R == 0 && C == 0) {
                 break;
             }
 
+            queue.clear();
+
             arr = new char[L][R][C];
             visited = new int[L][R][C];
 
-            for (int i = 0; i < L; i++) {
-                for (int j = 0; j < R; j++) {
+            for (int h = 0; h < L; h++) {
+
+                for (int i = 0; i < R; i++) {
                     String line = reader.readLine();
-                    for (int k = 0; k < C; k++) {
-                        if (line.charAt(k) == 'S') {
-                            start = new Coordinate(i, j, k);
-                            arr[i][j][k] = '.';
-                        } else {
-                            arr[i][j][k] = line.charAt(k);
+
+                    for (int j = 0; j < C; j++) {
+                        arr[h][i][j] = line.charAt(j);
+
+                        if (arr[h][i][j] == 'S') {
+                            queue.offer(new Coord(i, j, h));
+                            visited[h][i][j] = 1;
                         }
                     }
                 }
+
                 reader.readLine();
             }
 
-            int count = bfs();
-
-            System.out.println(count == -1 ? "Trapped!" : "Escaped in " + count + " minute(s).");
-
+            solution();
         }
 
-        reader.close();
+        System.out.println(builder);
     }
 
-    private static int bfs() {
-        Queue<Coordinate> queue = new LinkedList<>();
-        queue.offer(start);
-        visited[start.getX()][start.getY()][start.getZ()] = 1;
+    static void solution() {
 
         while (!queue.isEmpty()) {
-            Coordinate now = queue.poll();
+            Coord now = queue.poll();
 
-            for (int i = 0; i < 6; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
-                int nz = now.getZ() + dz[i];
+            for (int i = 0; i < d.length; i++) {
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
+                int nz = now.z + d[i][2];
 
-                if (nx < 0 || nx >= L || ny < 0 || ny >= R || nz < 0 || nz >= C) {
+                if (nx < 0 || ny < 0 || nz < 0 || nx >= R || ny >= C || nz >= L || visited[nz][nx][ny] != 0) {
                     continue;
                 }
 
-                if (arr[nx][ny][nz] == 'E') {
-                    return visited[now.getX()][now.getY()][now.getZ()];
+                if (arr[nz][nx][ny] == 'E') {
+                    builder.append("Escaped in ")
+                            .append(visited[now.z][now.x][now.y])
+                            .append(" minute(s).")
+                            .append("\n");
+                    return;
                 }
 
-                if (arr[nx][ny][nz] == '.' && visited[nx][ny][nz] == 0) {
-                    queue.offer(new Coordinate(nx, ny, nz));
-                    visited[nx][ny][nz] = visited[now.getX()][now.getY()][now.getZ()] + 1;
+                if (arr[nz][nx][ny] == '.') {
+                    visited[nz][nx][ny] = visited[now.z][now.x][now.y] + 1;
+                    queue.offer(new Coord(nx, ny, nz));
                 }
             }
         }
 
-        return -1;
+        builder.append("Trapped!")
+                .append("\n");
     }
 }
 
-class Coordinate {
+class Coord {
 
-    private int x;
-    private int y;
-    private int z;
+    int x;
+    int y;
+    int z;
 
-    public Coordinate(int x, int y, int z) {
+    public Coord(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getZ() {
-        return z;
     }
 }
