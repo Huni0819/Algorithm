@@ -2,111 +2,85 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] dx = {1, 0, -1, 0};
-    static int[] dy = {0, 1, 0, -1};
+    static int[][] d = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
 
-    static int n;
-    static int m;
-    static int[][] arr;
-    static int[][] count;
-    static boolean[][][] visited;
+    static int N;
+    static int M;
+
+    static char[][] arr;
+    static int[][][] visited;
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
+        String[] input = reader.readLine().split(" ");
+        N = Integer.parseInt(input[0]);
+        M = Integer.parseInt(input[1]);
 
-        if (n == 1 && m == 1) {
-            System.out.println(1);
-            System.exit(0);
-        }
+        arr = new char[N][M];
+        visited = new int[N][M][2];
 
-        arr = new int[n+1][m+1];
-        count = new int[n+1][m+1];
-        visited = new boolean[n+1][m+1][2];
-
-        for (int i = 1; i <= n; i++) {
+        for (int i = 0; i < N; i++) {
             String line = reader.readLine();
-            for (int j = 1; j <= m; j++) {
-                arr[i][j] = Integer.parseInt(Character.toString(line.charAt(j-1)));
+
+            for (int j = 0; j < M; j++) {
+                arr[i][j] = line.charAt(j);
             }
         }
 
-        System.out.println(solution(new Coordinate(1, 1, false)));
-
-        reader.close();
+        System.out.println(solution());
     }
 
-    private static int solution(Coordinate coordinate) {
-        Queue<Coordinate> queue = new LinkedList<>();
-        queue.offer(coordinate);
+    static int solution() {
+
+        Queue<Coord> queue = new LinkedList<>();
+        queue.offer(new Coord(0, 0, 0));
+        visited[0][0][0] = 1;
 
         while (!queue.isEmpty()) {
-            Coordinate now = queue.poll();
+            Coord now = queue.poll();
 
-            for (int i = 0; i < 4; i++) {
-                int x = now.getX() + dx[i];
-                int y = now.getY() + dy[i];
+            if (now.x == N-1 && now.y == M-1) {
+                return visited[now.x][now.y][now.wall];
+            }
 
-                if (x < 1 || x > n || y < 1 || y  > m) {
+            for (int i = 0; i < d.length; i++) {
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
+
+                if (nx < 0 || nx >= N || ny < 0 || ny >= M || visited[nx][ny][now.wall] != 0) {
                     continue;
                 }
 
-                if (arr[x][y] == 1) {
-                    if (!now.isCrash() && !visited[x][y][1]) {
-                        visited[x][y][1] = true;
-                        count[x][y] = count[now.getX()][now.getY()] + 1;
-                        queue.offer(new Coordinate(x, y, true));
-                    }
-                }
-                else {
-                    if (!visited[x][y][now.isCrash() ? 1 : 0]) {
-                        visited[x][y][now.isCrash() ? 1 : 0] = true;
-                        count[x][y] = count[now.getX()][now.getY()] + 1;
-                        queue.offer(new Coordinate(x, y, now.isCrash()));
-                    }
-                }
-
-                if (x == n && y == m) {
-                    return count[x][y] + 1;
+                if (arr[nx][ny] == '0') {
+                    visited[nx][ny][now.wall] = visited[now.x][now.y][now.wall] + 1;
+                    queue.offer(new Coord(nx, ny, now.wall));
+                } else if (arr[nx][ny] == '1' && now.wall == 0) {
+                    visited[nx][ny][1] = visited[now.x][now.y][now.wall] + 1;
+                    queue.offer(new Coord(nx, ny, 1));
                 }
             }
         }
 
         return -1;
     }
-
-
 }
 
-class Coordinate {
-    private int x;
-    private int y;
-    private boolean crash;
+class Coord {
 
-    public Coordinate(int x, int y, boolean crash) {
+    int x;
+    int y;
+    int wall;
+
+    public Coord(int x, int y, int wall) {
         this.x = x;
         this.y = y;
-        this.crash = crash;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public boolean isCrash() {
-        return crash;
+        this.wall = wall;
     }
 }
