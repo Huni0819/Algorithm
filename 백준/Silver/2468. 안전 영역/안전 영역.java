@@ -2,101 +2,98 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, -1, 1};
+    static int[][] d = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
 
-    static int N; // 2차원 밸열의 행과 열의 개수
+    static int N;
+
     static int[][] arr;
     static boolean[][] visited;
-    static int result = 1;
-    static int max = Integer.MIN_VALUE;
-    static int min = Integer.MAX_VALUE;
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         N = Integer.parseInt(reader.readLine());
 
         arr = new int[N][N];
 
+        int max = 1;
+        int min = 100;
+
         for (int i = 0; i < N; i++) {
-            StringTokenizer st = new StringTokenizer(reader.readLine());
+            String[] input = reader.readLine().split(" ");
 
             for (int j = 0; j < N; j++) {
-                arr[i][j] = Integer.parseInt(st.nextToken());
+                arr[i][j] = Integer.parseInt(input[j]);
 
                 max = Math.max(max, arr[i][j]);
                 min = Math.min(min, arr[i][j]);
             }
         }
 
-        for (int i = min; i < max; i++) {
-            visited = new boolean[N][N];
-
-            int count = 0;
-            for (int j = 0; j < N; j++) {
-                for (int k = 0; k < N; k++) {
-                    if (!visited[j][k] && arr[j][k] > i) {
-                        solution(j, k, i);
-                        count++;
-                    }
-                }
-            }
-
-            result = Math.max(count, result);
+        int count = 1;
+        for (int i = min; i <= max; i++) {
+            count = Math.max(count, solution(i));
         }
 
-        System.out.println(result);
-
-        reader.close();
+        System.out.println(count);
     }
 
-    private static void solution(int x, int y, int num) {
-        Queue<Coordinate> queue = new LinkedList<>();
-        queue.offer(new Coordinate(x, y));
+    static int solution(int height) {
+        visited = new boolean[N][N];
+        int count = 0;
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+
+                if (arr[i][j] > height && !visited[i][j]) {
+                    count++;
+                    bfs(i, j, height);
+                }
+            }
+        }
+
+        return count;
+    }
+
+    static void bfs(int x, int y, int height) {
+        Queue<Coord> queue = new LinkedList<>();
         visited[x][y] = true;
 
+        queue.offer(new Coord(x, y));
+
         while (!queue.isEmpty()) {
-            Coordinate now = queue.poll();
+            Coord now = queue.poll();
 
-            for (int i = 0; i < 4; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
+            for (int i = 0; i < d.length; i++) {
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
 
-                if (nx < 0 || nx >= N || ny < 0 || ny >= N) {
+                if (nx < 0 || ny < 0 || nx >= N || ny >= N || visited[nx][ny]) {
                     continue;
                 }
 
-                if (!visited[nx][ny] && arr[nx][ny] > num) {
+                if (arr[nx][ny] > height) {
+                    queue.offer(new Coord(nx, ny));
                     visited[nx][ny] = true;
-                    queue.offer(new Coordinate(nx, ny));
                 }
             }
         }
     }
 }
 
-class Coordinate {
+class Coord {
 
-    private int x;
-    private int y;
+    int x;
+    int y;
 
-    public Coordinate(int x, int y) {
+    public Coord(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 }
