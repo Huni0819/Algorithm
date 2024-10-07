@@ -2,99 +2,94 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] dx = {-1, 1, 0, 0};
-    static int[] dy = {0, 0, -1, 1};
+    static int[][] d = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
 
-    static int n;
-    static int m;
-    static int k;
+    static int N;
+    static int M;
+    static int K;
 
-    static int[][] arr;
-    static int[][][] visited;
+    static char[][] arr;
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
+        String[] input = reader.readLine().split(" ");
 
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
-        k = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(input[0]);
+        M = Integer.parseInt(input[1]);
+        K = Integer.parseInt(input[2]);
 
-        arr = new int[n][m];
-        visited = new int[n][m][k+1];
+        arr = new char[N][M];
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < N; i++) {
+
             String line = reader.readLine();
-            for (int j = 0; j < m; j++) {
-                arr[i][j] = Integer.parseInt(Character.toString(line.charAt(j)));
+            for (int j = 0; j < M; j++) {
+                arr[i][j] = line.charAt(j);
             }
         }
 
-        solution();
+        System.out.println(solution());
     }
 
-    private static void solution() {
+    static int solution() {
         Queue<Coord> queue = new LinkedList<>();
-        queue.offer(new Coord(0, 0, k));
-        visited[0][0][k] = 1;
+        int[][][] visited = new int[N][M][K+1];
 
-        while(!queue.isEmpty()) {
+        queue.offer(new Coord(0, 0, K));
+        visited[0][0][K] = 1;
+
+        while (!queue.isEmpty()) {
+
             Coord now = queue.poll();
 
-            if (now.getX() == n-1 && now.getY() == m-1) {
-                System.out.println(visited[now.getX()][now.getY()][now.getCount()]);
-                return;
+            if (now.x == N-1 && now.y == M-1) {
+                return visited[now.x][now.y][now.wall];
             }
 
-            for (int i = 0; i < 4; i++) {
-                int nx = now.getX() + dx[i];
-                int ny = now.getY() + dy[i];
+            for (int i = 0; i < d.length; i++) {
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
 
-                if (nx < 0 || nx >= n || ny < 0 || ny >= m) {
+                if (!checkOutOfBound(nx, ny)) {
                     continue;
                 }
 
-                if (now.getCount() > 0 && arr[nx][ny] == 1 && visited[nx][ny][now.getCount() - 1] == 0) {
-                    queue.offer(new Coord(nx, ny, now.getCount() - 1));
-                    visited[nx][ny][now.getCount()-1] = visited[now.getX()][now.getY()][now.getCount()] + 1;
-                } else if (arr[nx][ny] == 0 && visited[nx][ny][now.getCount()] == 0) {
-                    queue.offer(new Coord(nx, ny, now.getCount()));
-                    visited[nx][ny][now.getCount()] = visited[now.getX()][now.getY()][now.getCount()] + 1;
+                if (arr[nx][ny] == '0' && visited[nx][ny][now.wall] == 0) {
+                    queue.offer(new Coord(nx, ny, now.wall));
+                    visited[nx][ny][now.wall] = visited[now.x][now.y][now.wall] + 1;
+                }
+
+                if (now.wall > 0 && arr[nx][ny] == '1' && visited[nx][ny][now.wall - 1] == 0) {
+                    queue.offer(new Coord(nx, ny, now.wall - 1));
+                    visited[nx][ny][now.wall - 1] = visited[now.x][now.y][now.wall] + 1;
                 }
             }
         }
 
-        System.out.println(-1);
+        return -1;
+    }
+
+    static boolean checkOutOfBound(int x, int y) {
+        return (x >= 0 && x < N && y >= 0 && y < M);
     }
 }
 
 class Coord {
 
-    private int x;
-    private int y;
-    private int count;
+    int x;
+    int y;
+    int wall;
 
-    public Coord(int x, int y, int count) {
+    public Coord(int x, int y, int wall) {
         this.x = x;
         this.y = y;
-        this.count = count;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getCount() {
-        return count;
+        this.wall = wall;
     }
 }
