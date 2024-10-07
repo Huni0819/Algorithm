@@ -1,91 +1,52 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
 
+    static int N;
+    static int K;
+
+    static int[] arr = new int[100_001];
+
     public static void main(String[] args) throws Exception {
 
-        Solution solution = new Solution();
-        solution.input();
-        solution.solution();
-    }
-}
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-class Solution {
+        String[] input = reader.readLine().split(" ");
 
-    private int n;
-    private int k;
-    private boolean[] visited = new boolean[100_001];
+        N = Integer.parseInt(input[0]);
+        K = Integer.parseInt(input[1]);
 
-    public void input() throws Exception {
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(N);
+        arr[N] = 1;
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        n = Integer.parseInt(st.nextToken());
-        k = Integer.parseInt(st.nextToken());
+        while (!queue.isEmpty()) {
 
-        reader.close();
-    }
+            int now = queue.poll();
 
-    public void solution() {
-        Deque<Location> deque = new ArrayDeque<>();
-        visited[n] = true;
-        deque.offerFirst(new Location(n, 0));
-
-        while (!deque.isEmpty()) {
-            Location now = deque.pollFirst();
-
-            if (now.getX() == k) {
-                System.out.println(now.getTime());
-                return;
+            if (now == K) {
+                break;
             }
 
-            if (now.getX() < 0 || now.getX() > 100_000) {
-                continue;
+            if (now * 2 <= 100_000 && arr[now*2] == 0) {
+                queue.offer(now*2);
+                arr[now*2] = arr[now];
             }
 
-            if (now.getX() * 2 > 0 && now.getX() * 2 < 100_001) {
-                if (!visited[now.getX() * 2]) {
-                    deque.offerFirst(new Location(now.getX() * 2, now.getTime()));
-                    visited[now.getX() * 2] = true;
-                }
+            if (now - 1 >= 0 && arr[now-1] == 0) {
+                queue.offer(now-1);
+                arr[now-1] = arr[now] + 1;
             }
 
-            if (now.getX() - 1 >= 0) {
-                if (!visited[now.getX() - 1]) {
-                    deque.offerLast(new Location(now.getX() - 1, now.getTime() + 1));
-                    visited[now.getX() - 1] = true;
-                }
-            }
-
-            if (now.getX() + 1 < 100_001) {
-                if (!visited[now.getX() + 1]) {
-                    deque.offerLast(new Location(now.getX() + 1, now.getTime() + 1));
-                    visited[now.getX() + 1] = true;
-                }
+            if (now + 1 <= 100_000 && arr[now+1] == 0) {
+                queue.offer(now+1);
+                arr[now+1] = arr[now] + 1;
             }
         }
-    }
 
-}
-
-class Location {
-
-    private int x;
-    private int time;
-
-    public Location(int x, int time) {
-        this.x = x;
-        this.time = time;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getTime() {
-        return time;
+        System.out.println(arr[K]-1);
     }
 }
