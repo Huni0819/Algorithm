@@ -2,119 +2,109 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] dxHorse = {1, 2, 2, 1, -1, -2, -2, -1};
-    static int[] dyHorse = {2, 1, -1, -2, -2, -1, 1, 2};
+    static int[][] horse = {
+            {1, 2}, {2, 1}, {2, -1}, {1, -2},
+            {-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}
+    };
 
-    static int[] dxMonkey = {-1, 1, 0, 0};
-    static int[] dyMonkey = {0, 0, -1, 1};
+    static int[][] d = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1}
+    };
 
-    static int k;
-    static int w;
-    static int h;
+    static int K;
+    static int W;
+    static int H;
 
     static int[][] arr;
-    static int[][][] visited;
-
-    static Queue<Coord> queue = new LinkedList<>();
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        k = Integer.parseInt(reader.readLine());
+        K = Integer.parseInt(reader.readLine());
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        w = Integer.parseInt(st.nextToken());
-        h = Integer.parseInt(st.nextToken());
+        String[] input = reader.readLine().split(" ");
+        W = Integer.parseInt(input[0]);
+        H = Integer.parseInt(input[1]);
 
-        arr = new int[h][w];
-        visited = new int[h][w][k+1];
+        arr = new int[H][W];
 
-        for (int i = 0; i < h; i++) {
-            st = new StringTokenizer(reader.readLine());
+        for (int i = 0; i < H; i++) {
+            input = reader.readLine().split(" ");
 
-            for (int j = 0; j < w; j++) {
-                arr[i][j] = Integer.parseInt(st.nextToken());
+            for (int j = 0; j < W; j++) {
+                arr[i][j] = Integer.parseInt(input[j]);
             }
         }
 
-        solution();
+        System.out.println(solution());
     }
 
-    static void solution() {
-        queue.offer(new Coord(0, 0, k));
-        visited[0][0][k] = 1;
+    static int solution() {
+        Queue<Monkey> queue = new LinkedList<>();
+        queue.offer(new Monkey(0, 0, K));
+
+        int[][][] visited = new int[H][W][K+1];
+
+        visited[0][0][K] = 1;
 
         while (!queue.isEmpty()) {
-            Coord now = queue.poll();
 
-            if (now.getX() == h-1 && now.getY() == w-1) {
-                System.out.println(visited[now.getX()][now.getY()][now.getCount()] - 1);
-                return;
+            Monkey now = queue.poll();
+
+            if (now.x == H-1 && now.y == W-1) {
+                return visited[now.x][now.y][now.horse] - 1;
             }
 
-            for (int i = 0; i < 4; i++) {
-                int nx = now.getX() + dxMonkey[i];
-                int ny = now.getY() + dyMonkey[i];
+            for (int i = 0; i < d.length; i++) {
+                int nx = now.x + d[i][0];
+                int ny = now.y + d[i][1];
 
-                if (nx < 0 || nx >= h || ny < 0 || ny >= w) {
-                    continue;
-                }
-
-                if (arr[nx][ny] == 0 && visited[nx][ny][now.getCount()] == 0) {
-                    queue.offer(new Coord(nx, ny, now.getCount()));
-                    visited[nx][ny][now.getCount()] = visited[now.getX()][now.getY()][now.getCount()] + 1;
-                }
+                move(queue, now, nx, ny, now.horse, visited);
             }
 
-            if (now.getCount() > 0) {
-                for (int i = 0; i < 8; i++) {
-                    int nx = now.getX() + dxHorse[i];
-                    int ny = now.getY() + dyHorse[i];
+            if (now.horse > 0) {
+                for (int i = 0; i < horse.length; i++) {
 
-                    if (nx < 0 || nx >= h || ny < 0 || ny >= w) {
-                        continue;
-                    }
+                    int nx = now.x + horse[i][0];
+                    int ny = now.y + horse[i][1];
 
-                    if (arr[nx][ny] == 0 && visited[nx][ny][now.getCount()-1] == 0) {
-                        queue.offer(new Coord(nx, ny, now.getCount() - 1));
-                        visited[nx][ny][now.getCount()-1] = visited[now.getX()][now.getY()][now.getCount()] + 1;
-                    }
+                    move(queue, now, nx, ny, now.horse-1, visited);
                 }
             }
-
         }
 
-        System.out.println(-1);
+        return -1;
     }
 
+    static boolean checkOutOfBound(int x, int y) {
+        return x < 0 || x >= H || y < 0 || y >= W;
+    }
+
+    static void move(Queue<Monkey> queue, Monkey now, int nx, int ny, int horse, int[][][] visited) {
+        if (checkOutOfBound(nx, ny) || visited[nx][ny][horse] != 0) {
+            return;
+        }
+
+        if (arr[nx][ny] == 0) {
+            queue.offer(new Monkey(nx, ny, horse));
+            visited[nx][ny][horse] = visited[now.x][now.y][now.horse] + 1;
+        }
+    }
 }
 
-class Coord {
+class Monkey {
 
-    private int x;
-    private int y;
-    private int count;
+    int x;
+    int y;
+    int horse;
 
-    public Coord(int x, int y, int count) {
+    public Monkey(int x, int y, int horse) {
         this.x = x;
         this.y = y;
-        this.count = count;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getCount() {
-        return count;
+        this.horse = horse;
     }
 }
