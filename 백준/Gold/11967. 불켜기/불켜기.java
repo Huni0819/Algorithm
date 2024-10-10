@@ -19,21 +19,21 @@ public class Main {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
+        String[] input = reader.readLine().split(" ");
+        n = Integer.parseInt(input[0]);
+        m = Integer.parseInt(input[1]);
 
         arr = new boolean[n + 1][n + 1];
         visited = new boolean[n + 1][n + 1];
 
         for (int i = 0; i < m; i++) {
-            st = new StringTokenizer(reader.readLine());
+            input = reader.readLine().split(" ");
 
             // (x, y) 에서 (a, b) 방의 불을 켤 수 있음.
-            int x = Integer.parseInt(st.nextToken());
-            int y = Integer.parseInt(st.nextToken());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
+            int x = Integer.parseInt(input[0]);
+            int y = Integer.parseInt(input[1]);
+            int a = Integer.parseInt(input[2]);
+            int b = Integer.parseInt(input[3]);
 
             Coord coord = new Coord(x, y);
 
