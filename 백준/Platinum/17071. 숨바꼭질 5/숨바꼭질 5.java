@@ -1,75 +1,73 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
 
-    static Integer[] arr;
+    static int N;
+    static int K;
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
+        String[] input = reader.readLine().split(" ");
 
-        int n = Integer.parseInt(st.nextToken());
-        int k = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(input[0]);
+        K = Integer.parseInt(input[1]);
 
-        System.out.println(solution(n, k));
-
+        System.out.println(solution());
     }
 
-    private static int solution(int n, int k) {
-        if (n == k) {
+    static int solution() {
+
+        if (N == K) {
             return 0;
         }
 
         Queue<Integer> queue = new LinkedList<>();
-        queue.offer(n);
+        queue.offer(N);
 
         boolean[][] visited = new boolean[500_001][2];
+
         int time = 0;
-        visited[n][time] = true;
+        visited[N][time] = true;
 
         while (!queue.isEmpty()) {
-            if (k > 500_000) {
+
+            if (K > 500_000) {
                 return -1;
             }
 
-            int newT = time % 2;
-
-            if (visited[k][newT]) {
+            if (visited[K][time % 2]) {
                 return time;
             }
 
-            for (int j = 0, size = queue.size(); j < size; j++) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+
                 int now = queue.poll();
 
-                int nexT = (time + 1) % 2;
-                int next;
-
-                next = now - 1;
-
-                if (next >= 0 && !visited[next][nexT]) {
-                    visited[next][nexT] = true;
-                    queue.offer(next);
+                if (now - 1 >= 0 && !visited[now - 1][(time + 1) % 2]) {
+                    visited[now - 1][(time + 1) % 2] = true;
+                    queue.offer(now - 1);
                 }
 
-                next = now + 1;
-                if (next < 500_001 && !visited[next][nexT]) {
-                    visited[next][nexT] = true;
-                    queue.offer(next);
+                if (now + 1 <= 500_000 && !visited[now + 1][(time + 1) % 2]) {
+                    visited[now + 1][(time + 1) % 2] = true;
+                    queue.offer(now + 1);
                 }
 
-                next = now * 2;
-                if (next < 500_001 && !visited[next][nexT]) {
-                    visited[next][nexT] = true;
-                    queue.offer(next);
+                if (now * 2 <= 500_000 && !visited[now * 2][(time + 1) % 2]) {
+                    visited[now * 2][(time + 1) % 2] = true;
+                    queue.offer(now * 2);
                 }
             }
 
             time++;
-            k += time;
+            K += time;
+
         }
 
         return -1;
