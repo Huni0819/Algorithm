@@ -1,76 +1,54 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class Main {
 
-    static int[] visited;
-
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        int n = Integer.parseInt(reader.readLine());
+        int N = Integer.parseInt(reader.readLine());
 
-        if (n == 1) {
-            System.out.println(0);
-            System.exit(0);
-        }
-
-        visited = new int[n+1];
-
-        solution(n);
-
-        reader.close();
+        System.out.println(solution(N));
     }
 
-    public static void solution(int num) {
+    static int solution(int n) {
+
         Queue<Integer> queue = new LinkedList<>();
-        queue.offer(num);
-        visited[num] = 1;
+        queue.offer(n);
+        int[] visited = new int[n+1];
+        visited[n] = 1;
 
         while (!queue.isEmpty()) {
+
             int now = queue.poll();
 
-            for (int i = 0; i < 3; i++) {
-                int next = now;
-
-                if (i == 0) {
-                    if (next % 3 == 0) {
-                        next /= 3;
-                    } else {
-                        continue;
-                    }
-                }
-
-                if (i == 1) {
-                    if (next % 2 == 0) {
-                        next /= 2;
-                    } else {
-                        continue;
-                    }
-                }
-
-                if (i == 2) {
-                    next -= 1;
-                }
-
-                if (visited[next] == 0) {
-                    if (next == 1) {
-                        System.out.println(visited[now]);
-                        return;
-                    }
-
-                    visited[next] = visited[now] + 1;
-                    queue.offer(next);
-                }
-
-
+            if (now == 1) {
+                return visited[now] - 1;
             }
+
+            if (now % 3 == 0) {
+                check(now, now/3, visited, queue);
+            }
+
+            if (now % 2 == 0) {
+                check(now, now/2, visited, queue);
+            }
+
+            check(now, now-1, visited, queue);
         }
 
+        return visited[1];
     }
+
+    static void check(int now, int num, int[] visited, Queue<Integer> queue) {
+
+        if (visited[num] == 0) {
+            queue.offer(num);
+            visited[num] = visited[now] + 1;
+        }
+    }
+
 }
