@@ -38,9 +38,9 @@ public class Main {
 
     static int solution(int N) {
 
-        if(Objects.isNull(dp[N])) {
+        for (int i = 3; i <= N; i++) {
 
-            dp[N] = Math.max(solution(N-3) + arr[N-1], solution(N-2)) + arr[N];
+            dp[i] = Math.max(dp[i-3] + arr[i-1], dp[i-2]) + arr[i];
         }
 
         return dp[N];
