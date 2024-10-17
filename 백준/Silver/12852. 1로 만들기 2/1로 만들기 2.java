@@ -1,64 +1,78 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.stream.Stream;
 
 public class Main {
 
-    static int n;
-    static Integer[] dp;
-    static int[] prev;
+    static int N;
+    static int[][] arr;
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-        n = Integer.parseInt(reader.readLine());
-
-        dp = new Integer[n+1];
-        prev = new int[n+1];
-        dp[0] = 0;
-        dp[1] = 0;
-
-        System.out.println(solution(n));
-
         StringBuilder builder = new StringBuilder();
 
-        int index = n;
-        while (index != 0) {
-            builder.append(index).append(" ");
-            index = prev[index];
+        N = Integer.parseInt(reader.readLine());
+        arr = new int[N+1][2];
+
+        int count = solution();
+
+        builder.append(count)
+                .append("\n");
+
+        int index = 1;
+        int[] trace = new int[count+1];
+
+        for (int i = count; i >= 0; i--) {
+            trace[i] = index;
+            index = arr[index][1];
         }
 
-        System.out.println(builder);
+        Arrays.stream(trace)
+                .forEach(num -> builder.append(num)
+                        .append(" "));
+
+        System.out.print(builder);
     }
 
-    private static Integer solution(int n) {
+    static int solution() {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(N);
+        arr[N][0] = 1;
 
-        if (dp[n] != null) {
-            return dp[n];
+        while (!queue.isEmpty()) {
+            int now = queue.poll();
+
+            if (now == 1) {
+                return arr[now][0] - 1;
+            }
+
+            if (now % 3 == 0 && arr[now/3][0] == 0) {
+
+                queue.offer(now/3);
+                arr[now/3][0] = arr[now][0] + 1;
+                arr[now/3][1] = now;
+            }
+
+            if (now % 2 == 0 && arr[now/2][0] == 0) {
+
+                queue.offer(now/2);
+                arr[now/2][0] = arr[now][0] + 1;
+                arr[now/2][1] = now;
+            }
+
+            if (arr[now-1][0] == 0) {
+                queue.offer(now-1);
+                arr[now-1][0] = arr[now][0] + 1;
+                arr[now-1][1] = now;
+            }
+
         }
 
-        int x1 = Integer.MAX_VALUE;
-        int x2 = Integer.MAX_VALUE;
-        int x3 = Integer.MAX_VALUE;
-
-        if (n % 3 == 0) {
-            x3 = solution(n/3);
-        }
-
-        if (n % 2 == 0) {
-            x2 = solution(n/2);
-        }
-
-        x1 = solution(n-1);
-
-        if (x1 <= x2 && x1 <= x3) {
-            prev[n] = n-1;
-        } else if (x2 <= x1 && x2 <= x3) {
-            prev[n] = n/2;
-        } else {
-            prev[n] = n/3;
-        }
-
-        return dp[n] = Math.min(x1, Math.min(x2, x3)) + 1;
+        return 0;
     }
 }
