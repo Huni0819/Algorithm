@@ -1,54 +1,47 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.Arrays;
 
 public class Main {
 
-    static int n;
-    static int[][] arr;
-    static int[][] calc;
+    static int N;
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        n = Integer.parseInt(reader.readLine());
+        N = Integer.parseInt(reader.readLine());
 
-        arr = new int[n][];
-        calc = new int[n][];
+        int[][] arr = new int[N][];
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < N; i++) {
             arr[i] = new int[i+1];
-            calc[i] = new int[i+1];
 
-            StringTokenizer st = new StringTokenizer(reader.readLine());
-            for (int j = 0; j <= i; j++) {
-                arr[i][j] = Integer.parseInt(st.nextToken());
+
+            String[] input = reader.readLine().split(" ");
+
+            for (int j = 0; j < i+1; j++) {
+                arr[i][j] = Integer.parseInt(input[j]);
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            calc[n-1][i] = arr[n-1][i];
-        }
-
-        System.out.println(solution(0, 0));
-        reader.close();
+        System.out.println(solution(arr));
     }
 
-    private static int solution(int depth, int idx) {
+    static int solution(int[][] arr) {
 
-        if (depth == n -1) {
-            return calc[depth][idx];
+        int[][] dp = new int[N][];
+
+        dp[N-1] = arr[N-1];
+
+        for (int i = N-2; i >= 0; i--) {
+            dp[i] = new int[arr[i].length];
+
+            for (int j = 0; j <= i; j++) {
+                dp[i][j] = Math.max(dp[i+1][j], dp[i+1][j+1]) + arr[i][j];
+            }
         }
 
-        if (calc[depth][idx] == 0) {
-            calc[depth][idx] = Math.max(solution(depth + 1, idx),
-                    solution(depth + 1, idx +1)) + arr[depth][idx];
-        }
-
-        return calc[depth][idx];
+        return dp[0][0];
     }
-
-
 }
