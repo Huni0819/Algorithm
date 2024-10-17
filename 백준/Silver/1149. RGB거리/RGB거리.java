@@ -1,48 +1,45 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.Arrays;
 
 public class Main {
 
-    static int n;
+    static int N;
     static int[][] arr;
-    static int[][] calc;
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        n = Integer.parseInt(reader.readLine());
-        arr = new int[n][3];
-        calc = new int[n][3];
+        N = Integer.parseInt(reader.readLine());
 
+        arr = new int[N+1][3];
 
-
-        for (int i = 0; i < n; i++) {
-            StringTokenizer st = new StringTokenizer(reader.readLine());
+        for (int i = 1; i <=N; i++) {
+            String[] input = reader.readLine().split(" ");
 
             for (int j = 0; j < 3; j++) {
-                arr[i][j] = Integer.parseInt(st.nextToken());
+                arr[i][j] = Integer.parseInt(input[j]);
             }
         }
 
         System.out.println(solution());
-
-        reader.close();
     }
 
-    private static int solution() {
-        calc[0][0] = arr[0][0];
-        calc[0][1] = arr[0][1];
-        calc[0][2] = arr[0][2];
+    static int solution() {
+        int[][] dp = new int[N+1][3];
 
-        for (int i = 1; i < n; i++) {
-            for (int j = 0; j < 3; j++) {
-                calc[i][j] = Math.min(calc[i-1][(j+1)%3], calc[i-1][(j+2)%3]) + arr[i][j];
-            }
+        dp[1][0] = arr[1][0];
+        dp[1][1] = arr[1][1];
+        dp[1][2] = arr[1][2];
+
+        for (int i = 2; i <= N; i++) {
+
+            dp[i][0] = Math.min(dp[i-1][1], dp[i-1][2]) + arr[i][0];
+            dp[i][1] = Math.min(dp[i-1][0], dp[i-1][2]) + arr[i][1];
+            dp[i][2] = Math.min(dp[i-1][0], dp[i-1][1]) + arr[i][2];
         }
 
-        return Math.min(Math.min(calc[n-1][0], calc[n-1][1]), calc[n-1][2]);
+        return Math.min(dp[N][0], Math.min(dp[N][1], dp[N][2]));
     }
 }
