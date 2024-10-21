@@ -1,41 +1,39 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int n;
-    static int[] arr;
-    static int[] size;
-
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        n = Integer.parseInt(reader.readLine());
-        arr = new int[n];
-        size = new int[n];
+        int N = Integer.parseInt(reader.readLine());
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        for (int i = 0; i < n; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-            size[i] = 1;
+        int[] arr = new int[N+1];
+
+        String[] input = reader.readLine().split(" ");
+
+        for (int i = 1; i <= N; i++) {
+            arr[i] = Integer.parseInt(input[i-1]);
         }
 
-        int max = 1;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < i; j++) {
+        int[] dp = new int[N+1];
+        dp[1] = 1;
+
+        int max= 1;
+        for (int i = 1; i <= N; i++) {
+            dp[i] = 1;
+
+            for (int j = 1; j < i; j++) {
                 if (arr[i] > arr[j]) {
-                    size[i] = Math.max(size[i], size[j]+1);
+                    dp[i] = Math.max(dp[j] + 1, dp[i]);
                 }
             }
 
-            max = Math.max(max, size[i]);
+            max = Math.max(max, dp[i]);
         }
 
         System.out.println(max);
 
-        reader.close();
     }
 }
