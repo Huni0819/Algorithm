@@ -1,74 +1,36 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static int n;
-
-    static int max = 0;
-
-    static Consult[] arr;
-    static boolean[] visited;
+    static int N;
+    static int[][] arr;
 
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        n = Integer.parseInt(reader.readLine());
+        N = Integer.parseInt(reader.readLine());
+        arr = new int[N][2];
 
-        arr = new Consult[n];
-        visited = new boolean[n];
+        for (int i = 0; i < N; i++) {
+            String[] input = reader.readLine().split(" ");
 
-        for (int i = 0; i < n; i++) {
-            StringTokenizer st = new StringTokenizer(reader.readLine());
-
-            arr[i] = new Consult(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+            arr[i][0] = Integer.parseInt(input[0]);
+            arr[i][1] = Integer.parseInt(input[1]);
         }
 
-        for (int i = 0; i < n; i++) {
-            if (i + arr[i].day <= n) {
-                for (int k = 0; k < arr[i].day; k++) {
-                    visited[i+k] = true;
-                }
-                solution(i, arr[i].amount);
-                for (int k = 0; k < arr[i].day; k++) {
-                    visited[i+k] = false;
-                }
+        int[] dp = new int[N+1];
+
+        for (int i = 0; i < N; i++) {
+            if (i + arr[i][0] <= N) {
+                dp[i + arr[i][0]] = Math.max(dp[i + arr[i][0]], dp[i] + arr[i][1]);
             }
+
+            dp[i+1] = Math.max(dp[i+1], dp[i]);
         }
 
-        System.out.println(max);
-    }
+        System.out.println(dp[N]);
 
-    private static void solution(int index, int sum) {
-
-        max = Math.max(max, sum);
-
-        for (int i = index; i < n; i++) {
-            if (!visited[i]) {
-                if (i + arr[i].day <= n) {
-                    for (int k = 0; k < arr[i].day; k++) {
-                        visited[i+k] = true;
-                    }
-                    solution(i, sum + arr[i].amount);
-                    for (int k = 0; k < arr[i].day; k++) {
-                        visited[i+k] = false;
-                    }
-
-                }
-            }
-        }
-    }
-}
-
-class Consult {
-
-    int day;
-    int amount;
-
-    public Consult(int day, int amount) {
-        this.day = day;
-        this.amount = amount;
     }
 }
