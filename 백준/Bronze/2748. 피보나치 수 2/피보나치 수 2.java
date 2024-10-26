@@ -3,24 +3,35 @@ import java.io.InputStreamReader;
 
 public class Main {
 
+    static Long[] dp;
+
     public static void main(String[] args) throws Exception {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         int N = Integer.parseInt(reader.readLine());
-
-        long[] dp = new long[N+1];
-        dp[1] = 1;
+        dp = new Long[N+1];
+        dp[0] = 0L;
+        dp[1] = 1L;
 
         if (N >= 2) {
-            dp[2] = 1;
+            dp[2] = 1L;
         }
 
-        for (int i = 2; i <= N; i++) {
-            dp[i] = dp[i-1] + dp[i-2];
+        System.out.println(solution(N));
+    }
+
+    public static long solution(int N) {
+
+        if (N <= 2) {
+            return dp[N];
         }
 
-        System.out.println(dp[N]);
+        if (dp[N] == null) {
 
+            dp[N] = solution(N-1) + solution(N-2);
+        }
+
+        return dp[N];
     }
 }
