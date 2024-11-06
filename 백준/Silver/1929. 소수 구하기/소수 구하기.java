@@ -1,50 +1,36 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.StringTokenizer;
+import java.io.*;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        BufferedWriter writer =
-                new BufferedWriter(new OutputStreamWriter(System.out));
+        String[] input = br.readLine().split(" ");
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
+        int M = Integer.parseInt(input[0]);
+        int N = Integer.parseInt(input[1]);
 
-        int m = Integer.parseInt(st.nextToken());
-        int n = Integer.parseInt(st.nextToken());
+        boolean[] arr = new boolean[N+1];
 
-        for (int i = m; i <=n; i++) {
-            if (check(i)) {
-                writer.write(Integer.toString(i));
-                writer.write("\n");
+        arr[0] = true;
+        arr[1] = true;
+
+        for (int i = 2; i <= Math.sqrt(N); i++) {
+
+            for (int j = i * i; j <= N; j += i) {
+                arr[j] = true;
             }
         }
 
-        writer.flush();
-        writer.close();
-
-        reader.close();
-    }
-
-    private static boolean check(int n) {
-        if (n == 1) {
-            return false;
-        } else if (n == 2) {
-            return true;
-        }
-
-        for (int i = 2;  i <= Math.sqrt(n); i++) {
-            if (n % i == 0) {
-                return false;
+        StringBuilder builder = new StringBuilder();
+        for (int i = M; i <= N; i++) {
+            if(!arr[i]) {
+                builder.append(i)
+                    .append("\n");
             }
         }
 
-        return true;
+        System.out.print(builder);
     }
 }
