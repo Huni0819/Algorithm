@@ -13,7 +13,7 @@ public class Main {
         int K = Integer.parseInt(input[1]);
 
         long min = 0;
-        long max = Long.MIN_VALUE;
+        long max = Long.MAX_VALUE;
 
         int[] arr = new int[N];
 
@@ -22,11 +22,9 @@ public class Main {
             max = Math.max(max, arr[i]);
         }
 
-        max++;
-
         while (min < max) {
 
-            long mid = (min + max) / 2;
+            long mid = min + (max - min) / 2;
 
             int count = 0;
 
