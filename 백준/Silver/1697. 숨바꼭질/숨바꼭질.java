@@ -1,69 +1,51 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    static int n;
-    static int k;
-    static int count = 0;
-    static int[] seconds = new int[100_001];
+    static int[] arr = new int[100_001];
 
-    public static void main(String[] args) throws Exception {
+    public static void main (String[] args) throws Exception {
 
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        n = Integer.parseInt(st.nextToken());
-        k = Integer.parseInt(st.nextToken());
+        String[] input = br.readLine().split(" ");
 
-        Arrays.fill(seconds, 0);
-        
-        if (n == k) {
-            System.out.println(0);
-            System.exit(0);
-        }
-        
-        solution(n);
+        int N = Integer.parseInt(input[0]);
+        int K = Integer.parseInt(input[1]);
 
-        reader.close();
+        System.out.print(bfs(N, K));
     }
 
-    private static void solution(int n) {
+    static int bfs(int n, int k) {
         Queue<Integer> queue = new LinkedList<>();
+        arr[n] = 1;
         queue.offer(n);
-        seconds[n] = 1;
 
         while (!queue.isEmpty()) {
-            int num = queue.poll();
+            int now = queue.poll();
 
-            for (int i = 0; i < 3; i++) {
-                int next = num;
+            if (now == k) {
+                break;
+            }
 
-                if (i == 0) {
-                    next += 1;
-                } else if (i == 2) {
-                    next -= 1;
-                } else {
-                    next *= 2;
-                }
+            if (now + 1 < 100_001 && arr[now + 1] == 0) {
+                queue.offer(now + 1);
+                arr[now + 1] = arr[now] + 1;
+            }
 
-                if (next == k) {
-                    System.out.println(seconds[num]);
-                    return;
-                }
+            if (now - 1 >= 0 && arr[now - 1] == 0) {
+                queue.offer(now - 1);
+                arr[now - 1] = arr[now] + 1;
+            }
 
-                if ((next < 0 || next > 100_000) || seconds[next] != 0) {
-                    continue;
-                }
-
-                queue.offer(next);
-                seconds[next] = seconds[num] + 1;
+            if (now * 2 < 100_001 && arr[now * 2] == 0) {
+                queue.offer(now * 2);
+                arr[now * 2] = arr[now] + 1;
             }
         }
+
+        return arr[k] - 1;
     }
+    
 }
