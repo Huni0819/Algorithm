@@ -1,60 +1,43 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    static int n;
-    static int m;
-    static int[] arr;
-    static int max;
-    static int min;
-
     public static void main(String[] args) throws Exception {
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        arr = new int[n];
+        String[] input = br.readLine().split(" ");
 
-        st = new StringTokenizer(reader.readLine());
-        for (int i = 0; i < n; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
+        int N = Integer.parseInt(input[0]);
+        int M = Integer.parseInt(input[1]);
 
-            max = Math.max(max, arr[i]);
+        int[] arr = new int[N];
+
+        input = br.readLine().split(" ");
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(input[i]);
         }
 
-        Arrays.sort(arr);
+        long max = Long.MAX_VALUE;
+        long min = 0;
 
-        System.out.println(solution());
-
-        reader.close();
-    }
-
-    private static int solution() {
         while (min < max) {
-            int mid = (min + max) / 2;
 
-            long sum = 0;
+            long mid = (max + min) / 2;
 
-            for (int i = 0; i < n; i++) {
-
-                if (arr[i] - mid > 0) {
-                    sum += arr[i] - mid;
-                }
+            long count = 0;
+            for (int i = 0; i < N; i++) {
+                count += arr[i] - mid > 0 ? arr[i] - mid : 0;
             }
 
-            if (sum < m) {
+            if (count < M) {
                 max = mid;
             } else {
                 min = mid + 1;
             }
         }
 
-        return min - 1;
+        System.out.print(min - 1);
     }
 }
