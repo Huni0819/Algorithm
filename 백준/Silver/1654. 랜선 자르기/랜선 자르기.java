@@ -9,30 +9,28 @@ public class Main {
 
         String[] input = br.readLine().split(" ");
 
-        int N = Integer.parseInt(input[0]);
-        int K = Integer.parseInt(input[1]);
+        int K = Integer.parseInt(input[0]);
+        int N = Integer.parseInt(input[1]);
 
-        long min = 0;
-        long max = Long.MAX_VALUE;
+        int[] arr = new int[K];
 
-        int[] arr = new int[N];
-
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < K; i++) {
             arr[i] = Integer.parseInt(br.readLine());
-            max = Math.max(max, arr[i]);
         }
+
+        long max = Long.MAX_VALUE;
+        long min = 0;
 
         while (min < max) {
 
-            long mid = min + (max - min) / 2;
+            long mid = (max + min) / 2;
 
             int count = 0;
-
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < K; i++) {
                 count += arr[i] / mid;
             }
 
-            if (count < K) {
+            if (count < N) {
                 max = mid;
             } else {
                 min = mid + 1;
