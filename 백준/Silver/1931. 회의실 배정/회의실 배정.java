@@ -1,47 +1,58 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
-    static int n;
-    static int[][] arr;
-
     public static void main(String[] args) throws Exception {
 
-        BufferedReader br =
-                new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        n = Integer.parseInt(br.readLine());
-        arr = new int[n][2]; //시작 시간, 끝나는 시간
+        int N = Integer.parseInt(br.readLine());
 
-        for (int i = 0; i < n; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
+        PriorityQueue<Meeting> queue = new PriorityQueue<>(new Comparator<Meeting>() {
 
-            arr[i][0] = Integer.parseInt(st.nextToken());
-            arr[i][1] = Integer.parseInt(st.nextToken());
+            public int compare(Meeting o1, Meeting o2) {
+                            
+                if (o1.end == o2.end) {
+                    return o1.start - o2.start;
+                }
+
+                return o1.end - o2.end;
+            }
+        });
+
+        for (int i = 0; i < N; i++) {
+            String[] input = br.readLine().split(" ");
+
+            queue.offer(new Meeting(Integer.parseInt(input[0]), Integer.parseInt(input[1])));
         }
 
-        Arrays.sort(arr, (o1, o2) -> o1[1] == o2[1] ? o1[0] - o2[0] : o1[1] - o2[1]);
-
-        System.out.println(solution());
-
-        br.close();
-    }
-
-    private static int solution() {
         int count = 0;
         int prev = 0;
 
-        for (int i = 0; i < n; i++) {
-            if (prev <= arr[i][0]) {
-                prev = arr[i][1];
+        for (int i = 0; i < N; i++) {
+            Meeting now = queue.poll();
+
+            if (prev <= now.start) {
                 count++;
+                prev = now.end;
             }
         }
 
-        return count;
-    }
+        System.out.print(count);
 
+        
+    }
+}
+
+class Meeting {
+
+    int start;
+    int end;
+
+    public Meeting(int start, int end) {
+
+        this.start = start;
+        this.end = end;
+    }
 }
