@@ -1,62 +1,48 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class Main {
 
-    static final String PLUS = "+";
-    static final String MINUS = "-";
-    static final String NO = "NO";
-
     public static void main(String[] args) throws Exception {
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
 
-        BufferedWriter writer =
-                new BufferedWriter(new OutputStreamWriter(System.out));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder builder = new StringBuilder();
 
-        int n = Integer.parseInt(reader.readLine());
+        int N = Integer.parseInt(br.readLine());
 
-        int[] array = new int[n];
-        for (int i = 0; i < n; i++) {
-            array[i] = Integer.parseInt(reader.readLine());
+        Deque<Integer> deque = new ArrayDeque<>();
+        int[] arr = new int[N];
+
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(br.readLine());
         }
 
-        writer.write(solution(array));
-        writer.flush();
+        int num = 1;
+        int index = 0;
+        for (int i = 0; i < N; i++) {
 
-        reader.close();
-        writer.close();
-    }
+            while (deque.isEmpty() || deque.peekLast() != arr[index]) {
 
-    private static String solution(int[] array) {
-        Stack<Integer> stack = new Stack<>();
-        StringBuilder builder = new StringBuilder();
-        int current = 1;
-        for (Integer num : array) {
-
-            if (current <= num) {
-
-                while (current <= num) {
-                    stack.push(current++);
-                    builder.append(PLUS).append("\n");
+                if (num == N+1) {
+                    break;
                 }
 
-                stack.pop();
-                builder.append(MINUS).append("\n");
-            } else {
+                deque.offerLast(num);
+                num++;
+                builder.append("+")
+                        .append("\n");
+            }
 
-                if (stack.isEmpty() || stack.peek() > num) {
-                    return NO;
-                }
-
-                stack.pop();
-                builder.append(MINUS).append("\n");
+            if (deque.peekLast() == arr[index]) {
+                deque.pollLast();
+                index++;
+                builder.append("-")
+                        .append("\n");
             }
         }
 
-        return builder.toString();
+        System.out.println(deque.isEmpty() ? builder : "NO");
     }
 }
