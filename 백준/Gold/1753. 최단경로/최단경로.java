@@ -1,97 +1,97 @@
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class Main {
 
     static int V;
     static int E;
 
-    static List<Node>[] list;
+    static List<Node>[] lists;
     static Integer[] visited;
 
-    static StringBuilder builder = new StringBuilder();
-
-    public static void main (String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         String[] input = br.readLine().split(" ");
-
         V = Integer.parseInt(input[0]);
         E = Integer.parseInt(input[1]);
+        int K = Integer.parseInt(br.readLine());
 
-        int start = Integer.parseInt(br.readLine());
+        lists = new List[V + 1];
+        visited = new Integer[V + 1];
 
-        visited = new Integer[V+1];
-        list = new List[V+1];
         for (int i = 1; i <= V; i++) {
-            list[i] = new ArrayList<>();
+
+            lists[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < E; i++) {
+
             input = br.readLine().split(" ");
 
             int u = Integer.parseInt(input[0]);
             int v = Integer.parseInt(input[1]);
             int w = Integer.parseInt(input[2]);
 
-            list[u].add(new Node(v, w));
+            lists[u].add(new Node(v, w));
         }
 
-        solution(start);
+        solution(K);
+
+        StringBuilder builder = new StringBuilder();
 
         for (int i = 1; i <= V; i++) {
-            builder.append(visited[i] == null ? "INF" : visited[i])
-                .append("\n");
+            builder.append(Objects.isNull(visited[i]) ? "INF" : visited[i])
+            .append("\n");
         }
 
         System.out.print(builder);
     }
 
-    static void solution(int n) {
+    static void solution(int K) {
 
-        PriorityQueue<Node> queue = new PriorityQueue<>(new Comparator<>() {
+        PriorityQueue<Node> queue = new PriorityQueue<>(new Comparator<Node>() {
 
-            public int compare(Node o1, Node o2) {
-
-                if (o1.weight == o2.weight) {
-                    return o1.x - o2.x;
-                }
-
-                return o1.weight - o2.weight;
+            public int compare(Node n1, Node n2) {
+                return n1.w == n2.w ? n1.v - n2.v : n1.w - n2.w;
             }
         });
 
-        queue.offer(new Node(n, 0));
+        visited[K] = 0;
+        for (Node n : lists[K]) {
+            queue.offer(n);
+        }
 
         while (!queue.isEmpty()) {
 
             Node now = queue.poll();
 
-            if (visited[now.x] != null) {
+            if (Objects.nonNull(visited[now.v])) {
                 continue;
             }
 
-            visited[now.x] = now.weight;
+            visited[now.v] = now.w;
 
-            for (Node next : list[now.x]) {
-
-                if (visited[next.x] == null) {
-                    queue.offer(new Node(next.x, next.weight + now.weight));
+            for (Node next : lists[now.v]) {
+                
+                if (Objects.isNull(visited[next.v])) {
+                    queue.offer(new Node(next.v, visited[now.v] + next.w));
                 }
             }
         }
-        
     }
 }
 
 class Node {
 
-    int x;
-    int weight;
+    int v;
+    int w;
 
-    public Node(int x, int weight) {
-        this.x = x;
-        this.weight = weight;
+    public Node(int v, int w) {
+        this.v = v;
+        this.w = w;
     }
+
 }
