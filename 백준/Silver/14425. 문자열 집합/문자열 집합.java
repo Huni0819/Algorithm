@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Main {
@@ -13,11 +14,11 @@ public class Main {
         int N = Integer.parseInt(input[0]);
         int M = Integer.parseInt(input[1]);
 
-        List<String> list = new ArrayList<>();
+        HashSet<String> set = new HashSet<>();
 
         for (int i = 0; i < N; i++) {
 
-            list.add(br.readLine());
+            set.add(br.readLine());
         }
 
         int count = 0;
@@ -25,7 +26,7 @@ public class Main {
 
             String word = br.readLine();
 
-            if (list.contains(word)) {
+            if (set.contains(word)) {
 
                 count++;
             }
