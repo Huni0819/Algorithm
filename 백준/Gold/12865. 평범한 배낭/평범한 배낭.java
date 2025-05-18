@@ -1,64 +1,40 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Solution solution = new Solution();
-        solution.input();
-        solution.solution();
-    }
-}
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-class Solution {
+        String[] input = br.readLine().split(" ");
+        int N = Integer.parseInt(input[0]);
+        int K = Integer.parseInt(input[1]);
 
-    private int n;
-    private int k;
-    private Integer[][] dp;
-    private int[] w;
-    private int[] v;
+        int[][] arr = new int[N][2];
 
-    public void input() throws Exception {
-        BufferedReader reader =
-                new BufferedReader(new InputStreamReader(System.in));
+        for (int i = 0; i < N; i++) {
 
-        StringTokenizer st = new StringTokenizer(reader.readLine());
-        n = Integer.parseInt(st.nextToken());
-        k = Integer.parseInt(st.nextToken());
-
-        dp = new Integer[n][k+1];
-        w = new int[n];
-        v = new int[n];
-
-        for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(reader.readLine());
-            w[i] = Integer.parseInt(st.nextToken());
-            v[i] = Integer.parseInt(st.nextToken());
+            input = br.readLine().split(" ");
+            arr[i][0] = Integer.parseInt(input[0]); // 물건의 무게
+            arr[i][1] = Integer.parseInt(input[1]); // 물건의 가치
         }
 
-        reader.close();
-    }
+        int[][] dp = new int[N + 1][K + 1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= K; j++) {
 
-    public void solution() {
-        System.out.println(knapsack(n-1, k));
-    }
+                if (arr[i - 1][0] > j) { // 현재 물건을 담을 수 없다면
 
-    private int knapsack(int i, int k) {
-        if (i < 0) {
-            return 0;
-        }
+                    dp[i][j] = dp[i - 1][j];
+                } else {
 
-        if (dp[i][k] == null) {
-
-            if (w[i] > k) {
-                dp[i][k] = knapsack(i - 1, k);
-            } else if (w[i] <= k) {
-                dp[i][k] = Math.max(knapsack(i - 1, k), knapsack(i - 1, k - w[i]) + v[i]);
+                    dp[i][j] = Math.max(dp[i - 1][j],
+                            arr[i - 1][1] + dp[i - 1][j - arr[i - 1][0]]);
+                }
             }
         }
 
-        return dp[i][k];
+        System.out.println(dp[N][K]);
     }
 }
